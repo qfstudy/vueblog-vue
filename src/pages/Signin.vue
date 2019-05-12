@@ -33,7 +33,7 @@ export default {
 
     checkInputValue(){
       if ($('.user-name').val().trim() === '' || $('.password').val().trim() === '' ) {
-        this.$root.tooltip('请输入用户名或密码')
+        this.$root.tooltip('请输入用户名或密码',1)
         return
       }
       this.postUserData()
@@ -47,14 +47,14 @@ export default {
         .then((response)=>{
           let res=response.data
           if(res.code===200){
-            this.$root.tooltip(res.message)
+            this.$root.tooltip(res.message,1)
             $('.user-name').val('') 
             $('.password').val('')
             this.$root.bus.$emit('emitSetUserName')
             this.$router.push({name: 'Homepage'})
           }
           if(res.code===500){
-            this.$root.tooltip(res.message)
+            this.$root.tooltip(res.message,1)
           }
         })
         .catch(function(error){
@@ -78,12 +78,10 @@ export default {
       if(this.userName){
         this.$router.push({name: 'Homepage'})
       }
-    },
-    eventBusFn(){
-      this.$root.bus.$emit('emitSetUserName')
     }
   },
   mounted(){
+    // this.$store.commit('checkLoginCookie')
     this.keyupEvent()
     this.setUserName()
   }
@@ -98,11 +96,12 @@ export default {
     background: #fff;
     box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.1);
     height: 500px;
+    margin-top: 100px;
     .signin-main{
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 100px;
+      margin-top: 150px;
       >input{
         border: 1px solid #ddd;
         border-radius: 5px;

@@ -56,13 +56,7 @@ export default {
       let writeNavbarHeight=writeNavbar.getBoundingClientRect().height
       let titleWrapperHeight=titleWrapper.getBoundingClientRect().height
       let writeTtitleNavHeight=writeTtitleNav.getBoundingClientRect().height
-      // console.log('888888888888')
-      // console.log(titleWrapperHeight)
-      // console.log(writeTtitleNavHeight)
-      // console.log(writeNavbarHeight)
-      // console.log(bodyHeight)
-      // console.log(val)
-      // console.log('888888888888')
+    
       writeContent.style.height=(bodyHeight-titleWrapperHeight-writeTtitleNavHeight-val)+'px'
       previewContent.style.height=(bodyHeight-titleWrapperHeight-writeTtitleNavHeight-val)+'px'
     },
@@ -86,12 +80,12 @@ export default {
     },
     checkInputValue(){
       if ($('.title').val().trim() === '') {
-        this.$root.tooltip('请输入标题')
+        this.$root.tooltip('请输入标题',1)
         this.isCheckInputValue=false
         return
       }
       if(document.getElementById('write-article').value.trim()===''){
-        this.$root.tooltip('请输入内容')
+        this.$root.tooltip('请输入内容',1)
         this.isCheckInputValue=false
         return
       }
@@ -109,10 +103,10 @@ export default {
         // console.log('write response'+response)
         let res=response.data
         if(res.code===200){
-          this.$root.tooltip(res.message)
+          this.$root.tooltip(res.message,1)
         }
         if(res.code==400){
-          this.$root.tooltip(res.message)
+          this.$root.tooltip(res.message,1)
         }
       }).catch((error)=>{
         console.log(error)
@@ -126,7 +120,7 @@ export default {
           // console.log(response)
           let res=response.data
           if(res.code!==200){
-            this.$root.tooltip(res.message)
+            this.$root.tooltip(res.message,2)
             let timer = setTimeout(()=>{
               this.$router.push({name: 'Signin'})
               clearTimeout(timer)
@@ -146,32 +140,22 @@ export default {
         }
         this.n++
       },50)
-    },
-    eventBusFn(){
-      this.$root.bus.$on('getNavHeight',(val)=>{
-        this.navHeight=val
-        this.setDivHeight(val)
-      })       
-    },
+    }
   },
   mounted(){
     hljs.initHighlightingOnLoad()
-    this.eventBusFn() 
     this.setUserName()
   }
 }
 </script>
 
 <style lang="scss">
-  // @import "../assets/css/github.css";
-
   html,body{
     height: 100%;
     overflow-y: hidden;
   }
   .write-wrapper{
-    overflow-y: hidden;
-    // height: 100%;
+    margin-top: 56px;
     .write-navbar{
       .title-wrapper{
         display: flex;
@@ -224,7 +208,7 @@ export default {
           padding-bottom: 60px;
           word-wrap: break-word;
           word-break: break-all;
-          overflow-y: auto;
+          // overflow-y: auto;
         }
         .content:focus {
           outline: none;
@@ -255,7 +239,7 @@ export default {
       // height: 83%;
       background: #fcfaf2;
       border-left: 1px solid #e9e9e9;
-      overflow: auto;
+      overflow-y: auto;
       border-bottom: 1px solid #d9d9d9;
     }
   }

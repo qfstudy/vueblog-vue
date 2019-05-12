@@ -26,10 +26,10 @@ new Vue({
     }
   },
   methods:{
-    tooltip(text){
+    tooltip(text,time=2){
       this.$toast({
         message: text,
-        duration: 2,
+        duration: time,
         position: 'middle',
       })
     }

@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import $ from 'jquery'
 import axios from 'axios'
 axios.defaults.withCredentials=true
 
@@ -43,61 +42,29 @@ export default {
     }
   },
   methods: {
-    inputChange(){
-      this.save=true
-      this.edit=false
-    },
-    saveClick(){
-      this.save=false
-      this.edit=true
-    },
-    // saveButtonChangeClass(){
-      
-    // },
-    setUserName(){
-      let timer=setInterval(()=>{
-        this.userName=this.$store.state.userName
-        if(this.userName || this.n>10){          
-          this.checkLogin()
-          console.log('this.userNamennn+user: '+this.userName,this.n)
-          this.n=1
-          clearInterval(timer)
-        }
-        this.n++
-      },50)
-    },
-    checkLogin(){
-      if(!this.userName && this.userName !== this.$route.params.userName){
-        this.$root.tooltip('请先登录')
-        let timer = setTimeout(() => {
-          this.$router.push({name: 'Signin'})
-          clearTimeout(timer)
-        }, 2000)
-        return
-      }
-      this.getUserArticleInfo()
-    },
     getUserArticleInfo(){
       axios.get('http://localhost:3000/user',{
         params:{
-          userName: this.userName
+          userName: this.$route.params.userName
         }
       })
       .then((response)=>{
         this.userArticel = response.data.articles
         this.avatar=this.userArticel[0].avatar
-        console.log(this.userArticel)
+        // console.log(this.userArticel)
       })
     }
   },
   mounted(){
-    this.setUserName()
+    this.userName=this.$route.params.userName
+    this.getUserArticleInfo()
   }
 }
 </script>
 
 <style lang="scss" scoped>
   .user-container{
+    margin-top: 56px;
     background: #fff;
     .user-left-wrapper{
       .user-info-container{

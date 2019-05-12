@@ -82,12 +82,12 @@ export default {
     },
     checkInputValue(){
       if ($('.title').val().trim() === '') {
-        this.$root.tooltip('请输入标题')
+        this.$root.tooltip('请输入标题',1)
         this.isCheckInputValue=false
         return
       }
       if(document.getElementById('write-article').value.trim()===''){
-        this.$root.tooltip('请输入内容')
+        this.$root.tooltip('请输入内容',1)
         this.isCheckInputValue=false
         return
       }
@@ -106,9 +106,9 @@ export default {
         console.log('edit response'+response)
         let res=response.data
         if(res.code===200){
-          this.$root.tooltip(res.message)
+          this.$root.tooltip(res.message,1)
         }else{
-          this.$root.tooltip(res.message)
+          this.$root.tooltip(res.message,1)
         }
       }).catch((error)=>{
         console.log(error)

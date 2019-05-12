@@ -8,7 +8,7 @@
         <textarea class="comment-input-content" spellcheck="false" placeholder="写下你的评论...  ">
         </textarea>   
       </div>
-      <span class="submit" @click="saveCommentToMql">发送</span>
+      <button class="submit" @click="saveCommentToMql">发送</button>
     </section>
 
     <section v-else class="no-signin">
@@ -71,7 +71,7 @@ export default {
     checkInputValue(){
       console.log("$('.content').val().trim(): "+ $('.comment-input-content').val().trim())
       if ($('.comment-input-content').val().trim() === '') {
-        this.$root.tooltip('请输入评论！')
+        this.$root.tooltip('请输入评论',1)
         this.checkCommentValue=false
 			}else{
         this.checkCommentValue=true
@@ -90,11 +90,11 @@ export default {
       .then((response)=>{
         console.log(response)
         if(response.data.code==200){
-          this.$root.tooltip(response.data.message)
+          this.$root.tooltip(response.data.message,1)
           this.getComment()
           document.querySelector('.comment-input-content').value=''
         }else{
-          this.$root.tooltip(response.data.message)
+          this.$root.tooltip(response.data.message,1)
         }
       })
     },
@@ -123,10 +123,10 @@ export default {
       .then((response)=>{
         console.log(response)
         if(response.data.code===200){
-          this.$root.tooltip(response.data.message)
+          this.$root.tooltip(response.data.message,1)
           this.getComment()
         }else{
-          this.$root.tooltip(response.data.message)
+          this.$root.tooltip(response.data.message,1)
         }
       })
     }
@@ -141,9 +141,10 @@ export default {
 <style lang="scss" scoped>
   .comment-container{
     .comment-write-wrapper{
-      position: relative;
-      left: 25%;
+      padding-left: 10px;
       margin-top: 20px;
+      display: flex;
+      flex-direction: column;
       .content-write{
         display: flex;
         align-items: center;        
@@ -168,15 +169,18 @@ export default {
           outline: none;
         }
       }
-      .submit{
-        position: absolute;
-        right: 42%;
-        display: inline-block;
+      .submit{        
         border: 1px solid #ddd;
         border-radius: 5px;
-        padding: 4px 10px;
         cursor: pointer;
         margin-top: 10px;
+        width: 60px;
+        height: 40px;
+        margin-left: 50%;
+        background: #fff;
+      }
+      .submit:focus{
+        outline: none;
       }
     }
     .no-signin{

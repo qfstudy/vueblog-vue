@@ -12,32 +12,29 @@ export default {
   name: 'App',
   data(){
     return {
-      // navHeight: ''
     }
   },
   methods:{
     getNavbarHeight(){
       let navbar=document.querySelector('.navbar')
       let main=document.querySelector('.main')
-      // console.log(navbar.getBoundingClientRect())
       let navbarHeight=navbar.getBoundingClientRect().height
       main.style.marginTop=navbarHeight+'px'
-      // this.navHeight = navbarHeight
     }
   },
-  mounted(){
-    this.getNavbarHeight()
-    // if(this.navHeight){
-    //   this.$root.bus.$emit('getNavHeight',this.navHeight)
-    // }
-  }
+  // mounted(){
+  //   this.getNavbarHeight()
+  // },
+  // updated () {
+  //   this.getNavbarHeight()
+  // }
 }
 </script>
 
 <style lang="scss" scoped> 
-.navbar{
-  position: fixed;
-  top: 0;
-  width: 100%;
-} 
+  .navbar{
+    position: fixed;
+    top: 0;
+    width: 100%;
+  } 
 </style>

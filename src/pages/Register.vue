@@ -41,7 +41,7 @@ export default {
       let file = uploadAvatar.files[0]
       // console.log(file)
       if(file.size>2048000){
-        this.$root.tooltip('上传的图片要小于1.8MB!')
+        this.$root.tooltip('上传的图片要小于1.8MB!',1)
         return
       }
       if (uploadAvatar.files.length === 0 || !fileReader) {
@@ -49,7 +49,7 @@ export default {
       }
 
       if (!/image/g.test(file.type)) {
-        this.$root.tooltip('请上传图片文件!')
+        this.$root.tooltip('请上传图片文件!',1)
         $('.preview-avatar').attr('src', '')
         $('.preview-avatar').fadeOut()
         return 
@@ -65,17 +65,17 @@ export default {
 
     checkInputValue(){
       if ($('.user-name').val().trim() === '') {
-        this.$root.tooltip('请输入用户名')
+        this.$root.tooltip('请输入用户名',2)
       }else if($('.user-name').val().match(/[<'">]/g)){
-        this.$root.tooltip('请输入合法字符')
+        this.$root.tooltip('请输入合法字符',2)
       }else if(($('.password').val().trim() === '')){
-        this.$root.tooltip('请输入密码')
+        this.$root.tooltip('请输入密码',2)
       }else if(($('.confirm-password').val().trim() === '')){
-        this.$root.tooltip('请确认密码')
+        this.$root.tooltip('请确认密码',2)
       }else if($('.password').val().trim()!==$('.confirm-password').val().trim()){
-        this.$root.tooltip('两次输入的密码不一致')
+        this.$root.tooltip('两次输入的密码不一致',2)
       }else if(!this.$refs.uploadAvatar.files[0]){
-        this.$root.tooltip('请上传头像！')
+        this.$root.tooltip('请上传头像',2)
       }else{
         this.postUserData()
       }
@@ -91,13 +91,13 @@ export default {
           // console.log(response.data)
           let res=response.data
           if(res.code===200){
-            this.$root.tooltip(res.message)
+            this.$root.tooltip(res.message,1)
             $('.user-name').val('')
             $('.password').val('')
             $('.confirm-password').val('')
             this.$router.push({name: 'Signin'})
           }else{
-            this.$root.tooltip(res.message)
+            this.$root.tooltip(res.message,1)
           }
         })
         .catch(function(error){
@@ -119,6 +119,7 @@ export default {
     background: #fff;
     box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.1);
     height: 500px;
+    margin-top: 100px;
     .signup-content{
       display: flex;
       flex-direction: column;

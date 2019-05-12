@@ -79,17 +79,17 @@ export default {
       .then((response)=>{
         console.log(response.data)
         if(response.data.code===200){
-          this.$root.tooltip(response.data.message)
+          this.$root.tooltip(response.data.message,1)
           let timer = setTimeout(() => {
             this.$router.push({name: 'Homepage'})
             clearTimeout(timer)
-          }, 2000)
+          }, 1000)
         }else{
-          this.$root.tooltip(response.data.message)
+          this.$root.tooltip(response.data.message,1)
           let timer = setTimeout(() => {
             window.location.reload()
             clearTimeout(timer)
-          }, 2000)
+          }, 1000)
         }
       })
     },
@@ -125,26 +125,19 @@ export default {
 <style lang="scss" scoped>
   // @import "../assets/css/github.css"
   .article-container{
+    margin-top: 56px;
     background: #fff;
     .article-wrapper{
       border-bottom: 1px solid #e9e9e9;
-      padding-left: 10px;
       padding-top: 10px;
       .article-title-content{
-        border-bottom: 1px solid #e9e9e9;
+        padding-left: 10px;
         .title-wrapper{
           .title{
             font-size: 24px;
             font-weight: 600;
           }
         }
-        // .content-wrapper{
-          // .content{
-            // font-size: 16px;
-            // word-wrap: break-word;
-            // word-break: break-all;
-          // }
-        // }
       }
       .bottom-wrapper{
         display: flex;
@@ -170,6 +163,7 @@ export default {
     }
     .comment-wrapper{
       margin-top: 10px;
+      width: 100%;
     }
   }
 </style>

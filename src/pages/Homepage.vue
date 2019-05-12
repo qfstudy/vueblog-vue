@@ -64,9 +64,8 @@ export default {
 
 <style lang="scss" scoped>
   .homepage-container{
-    // border: 1px solid red;
     background: #fff;
-    height: 100%;
+    margin-top: 56px;
     .homepage-main-wrapper{
       padding: 10px;
       border-bottom: 1px solid #e9e9e9;
@@ -88,7 +87,7 @@ export default {
           padding: 10px 0;
           display: -webkit-box;
           -webkit-box-orient: vertical;
-          -webkit-line-clamp: 3;
+          -webkit-line-clamp: 2;
           overflow: hidden;
         }
       }

@@ -1,13 +1,14 @@
 <template>
   <header class="navbar-wrapper">
-    <span class="navbar-user-name" v-if="userName">hello {{userName}}</span>
+    <div class="navbar-homepage">
+      <router-link :to="{ name: 'Homepage'}">
+        首页							
+      </router-link>
+    </div>
     <div class="navbar-content">
       <a target="__blank" href="https://github.com/qfstudy/koa2-blog">
         GitHub
       </a>							
-      <router-link :to="{ name: 'Homepage'}">
-        首页							
-      </router-link>
       <span class="user-page" @click="navbarCheckPageLogin">
         <router-link 
           :to="{ name: 'User', params: { userName: userName ? userName : false}}">
@@ -28,7 +29,17 @@
       <span class="signout" v-if="userName" @click="signoutClick">
         登出
       </span>
+      <span>
+        <router-link 
+          :to="{ name: 'User', params: { userName: userName ? userName : false}}"
+        >
+          <img :src="avatar" class="navbar-avatar" v-if="userName">			
+        </router-link>
+      </span>
     </div>
+    <!-- <div class="avatar-username">
+      
+    </div> -->
 	</header>
 </template>
 
@@ -40,17 +51,16 @@ export default {
   name: 'Navbar',
   data(){
     return{
-      // isLogin: false,
       cookieValue: '',
       userName: '',
-      navHeight: '',
+      avatar: '',
       n: 1
     }
   },
   methods: {
     navbarCheckPageLogin(){
       if(!this.userName){
-        this.$root.tooltip('还没有登录，无法访问')
+        this.$root.tooltip('还没有登录，无法访问',1)
         let timer=setTimeout(()=>{
           this.$router.push({name: 'Signin'})
           clearTimeout(timer)
@@ -64,10 +74,29 @@ export default {
         if((this.userName && this.cookieValue) || this.n>10){
           console.log('this.userNamennn: '+this.userName,this.n)
           this.n=1
+          if(this.userName && this.cookieValue){
+            this.getUserInfo()
+          }
           clearInterval(timer)
         }
         this.n++
       },50)
+    },
+    getUserInfo(){
+      axios.get('http://localhost:3000/signout',{
+        params:{
+          userName: this.userName
+        }
+      })
+      .then((response)=>{
+        let res=response.data
+        console.log(response)
+        if(res.code===200 && res.userInfo.length>0){
+          this.avatar=res.userInfo[0].avatar
+          // console.log(this.avatar)
+          return
+        }
+      })
     },
     signoutClick(){
       axios.post('http://localhost:3000/signout',{
@@ -76,14 +105,10 @@ export default {
         .then((response)=>{
           let res=response.data
           if(res.code===200){
-            this.$root.tooltip(res.message)
+            this.$root.tooltip(res.message,1)
+            // this.$store.commit('checkLoginCookie')
           }
           this.deleteUserName()
-          let timer = setTimeout(() => {
-            // window.location.reload()
-            this.$router.push({name: 'Homepage'})
-            clearTimeout(timer)
-          }, 2000)
         })
     },
 
@@ -92,13 +117,6 @@ export default {
       this.cookieValue=''
     },
 
-    getNavbarHeight(){
-      let navbar=document.querySelector('.navbar-wrapper')
-      let navbarHeight=navbar.getBoundingClientRect().height
-      this.navHeight = navbarHeight
-      // console.log("ssd: "+ navbarHeight)
-      // console.log('navbar height: '+this.navHeight)
-    },
     eventBusFn(){
       this.$root.bus.$on('emitSetUserName',(val)=>{
         this.$store.commit('checkLoginCookie')
@@ -107,11 +125,14 @@ export default {
     }
   },
   mounted(){
+    // console.log('navbar munted')
     this.$store.commit('checkLoginCookie')
     this.setUserName()
-
     this.eventBusFn()
-    this.getNavbarHeight()
+  },
+  updated(){
+    // console.log('navbar update')
+    this.$store.commit('checkLoginCookie')
   }
 }
 </script>
@@ -123,15 +144,23 @@ export default {
     justify-content: space-between;
     border-bottom: 1px solid #eee;
     background: #fff;
-    .navbar-user-name{
-      margin-left: 30px;
-      font-size: 20px;
+    height: 56px;
+    .navbar-homepage{
+      margin-left: 10px;
     }
     .navbar-content{
+      display: flex;
+      align-items: center;
       .signout{
         cursor: pointer;
         color: #666666;
-        margin-right: 30px;
+      }
+      .navbar-avatar{
+        width: 42px;
+        height: 42px;
+        border: 1px solid #eee;
+        border-radius: 50%;
+        margin-right: 10px;
       }
       a{
         display: inline-block;
