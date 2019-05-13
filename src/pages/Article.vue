@@ -133,8 +133,10 @@ export default {
       .article-title-content{
         padding-left: 10px;
         .title-wrapper{
+          // border-bottom: 1px solid #eee;
+          padding-bottom: 18px;
           .title{
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 600;
           }
         }
