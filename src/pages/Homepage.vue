@@ -57,9 +57,16 @@ export default {
         .catch(function(error){
           console.log(error)
         })
+    },
+    removeBodyClass(){
+      let html=document.querySelector('html')
+      let body=document.querySelector('body')
+      html.classList.remove('hidden-overflow')
+      body.classList.remove('hidden-overflow')
     }
   },
   mounted(){
+    this.removeBodyClass()
     this.getAllArticles() 
   }
 }

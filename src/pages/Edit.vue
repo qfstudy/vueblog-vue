@@ -11,7 +11,7 @@
       <ul class="write-title-nav">
         <li class="submit" @click="saveEditArticleToMql">保存修改</li>
         <li class="preview-submit" @click="preview">预览</li>
-        <a href="/">首页</a>
+        <li class="edit-to-homepage" @click="editToHomepage">首页</li>
       </ul>
     </section>
 
@@ -127,14 +127,16 @@ export default {
         let res=response.data
         if(res.code===200){
           this.$root.tooltip(res.message,1)
-          window.location.href=`/article/${this.$route.params.articleId}`
-          // this.$router.push({name: 'Article',params: { articleId: this.$route.params.articleId }})
+          this.$router.push({name: 'Article',params: { articleId: this.$route.params.articleId }})
         }else{
           this.$root.tooltip(res.message,1)
         }
       }).catch((error)=>{
         console.log(error)
       })
+    },
+    editToHomepage(){
+      this.$router.push({name: 'Homepage'})
     }
   },
   mounted(){

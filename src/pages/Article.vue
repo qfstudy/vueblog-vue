@@ -80,16 +80,10 @@ export default {
         console.log(response.data)
         if(response.data.code===200){
           this.$root.tooltip(response.data.message,1)
-          let timer = setTimeout(() => {
-            this.$router.push({name: 'Homepage'})
-            clearTimeout(timer)
-          }, 1000)
+          this.$router.push({name: 'Homepage'})
         }else{
           this.$root.tooltip(response.data.message,1)
-          let timer = setTimeout(() => {
-            window.location.reload()
-            clearTimeout(timer)
-          }, 1000)
+          this.$router.push({name: 'Homepage'})
         }
       })
     },
@@ -98,7 +92,6 @@ export default {
         this.userName=this.$store.state.userName
         this.cookieValue=this.$store.state.cookieValue
         if((this.userName && this.cookieValue) || this.n>10){
-          console.log('this.userNamennn+write: '+this.userName,this.n)
           this.n=1
           clearInterval(timer)
         }
@@ -112,13 +105,21 @@ export default {
           hljs.highlightBlock(block);
         })
       })
+    },
+    removeBodyClass(){
+      let html=document.querySelector('html')
+      let body=document.querySelector('body')
+      html.classList.remove('hidden-overflow')
+      body.classList.remove('hidden-overflow')
     }
   },
   mounted(){
+    this.removeBodyClass()
+    this.$store.commit('checkLoginCookie')
     this.initData()
     this.getArticleData()
     this.setUserName()
-  } 
+  }
 }
 </script>
 

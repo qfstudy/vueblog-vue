@@ -7,9 +7,7 @@
       <ul class="write-title-nav">
         <li class="submit" @click="saveDataToMql">发布文章</li>
         <li class="preview-submit" @click="preview">预览</li>
-        <li>
-          <a href="/">首页</a>
-        </li>
+        <li @click="writeToHomepage">首页</li>
       </ul>
     </section>
 
@@ -52,6 +50,9 @@ export default {
     }
   },
   methods: {
+    writeToHomepage(){
+      this.$router.push({name: 'Homepage'})
+    },
     setHeight(){
       let html=document.querySelector('html')
       let body=document.querySelector('body')
@@ -115,8 +116,7 @@ export default {
         let res=response.data
         if(res.code===200){
           this.$root.tooltip(res.message,1)
-          // this.$router.push({name: 'Homepage'})
-          window.location.href="/"
+          this.$router.push({name: 'Homepage'})
         }
         if(res.code==400){
           this.$root.tooltip(res.message,1)
@@ -143,7 +143,7 @@ export default {
         this.userName=this.$store.state.userName
         this.cookieValue=this.$store.state.cookieValue
         if((this.userName && this.cookieValue) || this.n>10){
-          console.log('this.userNamennn+write: '+this.userName,this.n)
+          // console.log('this.userNamennn+write: '+this.userName,this.n)
           this.n=1
           this.checkWriteLogin()
           clearInterval(timer)

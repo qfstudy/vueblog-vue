@@ -106,9 +106,9 @@ export default {
         }
       })
         .then((response)=>{
-          console.log(response)
+          // console.log(response)
           this.commentContent=response.data.commentArray
-          console.log(this.commentContent)          
+          // console.log(this.commentContent)          
         })
         .catch(function(error){
           console.log(error)
@@ -122,7 +122,7 @@ export default {
         articleId: this.$route.params.articleId
       })
       .then((response)=>{
-        console.log(response)
+        // console.log(response)
         if(response.data.code===200){
           this.$root.tooltip(response.data.message,1)
           this.getComment()
