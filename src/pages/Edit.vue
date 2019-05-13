@@ -11,6 +11,10 @@
       <ul class="write-title-nav">
         <li class="submit" @click="saveEditArticleToMql">保存修改</li>
         <li class="preview-submit" @click="preview">预览</li>
+        <!-- <router-link :to="{ name: 'Homepage'}">
+          首页							
+        </router-link> -->
+        <a href="/">首页</a>
       </ul>
     </section>
 
@@ -51,6 +55,25 @@ export default {
     }
   },
   methods: {
+    setHeight(){
+      let html=document.querySelector('html')
+      let body=document.querySelector('body')
+      html.classList.add('hidden-overflow')
+      body.classList.add('hidden-overflow')
+
+      let navbar=document.querySelector('.write-navbar')
+
+      let textarea = document.querySelector('.content')
+      let preview = document.querySelector('.preview-wrapper')
+
+      let bodyHeight=body.getBoundingClientRect().height
+      let navbarHeight=navbar.getBoundingClientRect().height
+
+      textarea.style.height=(bodyHeight-navbarHeight)+'px'
+      preview.style.height=(bodyHeight-navbarHeight)+'px'
+
+      // console.log(textarea.style.height,preview.style.height)
+    },
     getArticleData(){
       axios.get('http://localhost:3000/edit',{
         params: {
@@ -107,6 +130,8 @@ export default {
         let res=response.data
         if(res.code===200){
           this.$root.tooltip(res.message,1)
+          window.location.href=`/article/${this.$route.params.articleId}`
+          // this.$router.push({name: 'Article',params: { articleId: this.$route.params.articleId }})
         }else{
           this.$root.tooltip(res.message,1)
         }
@@ -117,19 +142,13 @@ export default {
   },
   mounted(){
     this.getArticleData()
+    this.setHeight()
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
-  html,body{
-    height: 100%;
-    overflow-y: hidden;
-  }
   .write-wrapper{
-    overflow-y: hidden;
-    // height: 100%;
     .write-navbar{
       .title-wrapper{
         display: flex;
@@ -139,7 +158,7 @@ export default {
           font-size: 20px;
           border: none;
           width: 100%;
-          // border-top: 1px solid #ddd;
+          border-top: 1px solid #ddd;
         }
         input.title:focus {
           outline: none;
@@ -152,6 +171,7 @@ export default {
         width: 100%;
         height: 46px;
         background: #d9d9d9;
+        padding-right: 10px;
         .submit{
           display: inline-block;
           margin-right: 22px;
@@ -165,24 +185,15 @@ export default {
       }
     }
     .write-content{
-      // height: 100%;
       .content-wrapper{
-        display: flex;
-        height: 100%;
-        border-bottom: 1px solid #d9d9d9;
         .content{
-          resize: none;
-          width: 100%;
-          // height: 100%;
-          border-color: transparent;
-          color: #333;
-          font-size: 18px;
-          font-weight: 400;
-          padding: 30px 38px;
-          padding-bottom: 60px;
-          word-wrap: break-word;
-          word-break: break-all;
           overflow-y: auto;
+          resize:none;
+          width: 100%;
+          border: none;
+          font-size: 18px;
+          color: #333333;
+          padding: 10px;
         }
         .content:focus {
           outline: none;
@@ -200,21 +211,17 @@ export default {
     }
     .write-content.write-preview .content-wrapper{
       width: 50%;
-      border-bottom: 1px solid #d9d9d9;
-      background: #ffff;
     }
     .write-content.write-preview .preview-wrapper{
       width: 50%;
-      border-color: transparent;
-      color: #333;
-      font-size: 18px;
-      padding: 30px 38px;
-      padding-bottom: 60px;
-      // height: 83%;
+      border: none;
       background: #fcfaf2;
       border-left: 1px solid #e9e9e9;
-      overflow: auto;
-      border-bottom: 1px solid #d9d9d9;
+      overflow-y: auto;
+      padding: 10px;
+      .preview-content{
+        font-size: 18px;
+      }
     }
   }
 </style>

@@ -1,5 +1,8 @@
 <template>
   <div class="homepage-container">
+    <div class="no-article" v-if="articleData.length<1">
+      还没有文章，快去写一篇吧
+    </div>
     <div class="homepage-main-wrapper" v-for="item in articleData" :key="item.id">
       <section class="homepage-title-wrapper">
         <!-- 跳转到文章详情 -->

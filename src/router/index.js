@@ -42,8 +42,7 @@ export default new Router({
       path: '/write',
       name: 'Write',
       components: {
-        main: Write,
-        navbar: Navbar
+        main: Write
       }
     },
     {
@@ -66,8 +65,7 @@ export default new Router({
       path: '/edit/:articleId',
       name: 'Edit',
       components: {
-        main: Edit,
-        navbar: Navbar
+        main: Edit
       }
     }
   ]

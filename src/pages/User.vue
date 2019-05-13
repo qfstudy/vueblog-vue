@@ -14,6 +14,9 @@
       <div class="article-info-wrapper">
         <div class="article-info">
           <span class="articel-tab">个人文章</span>
+          <div v-if="userArticel.length<1">
+            该作者还没有文章
+          </div>
           <div class="article-info-detail" v-for="item in userArticel" :key="item.id">
             <router-link :to="{ name: 'Article', params: { articleId: item.id }}">
               <span class="title">{{item.title}}</span>
@@ -50,14 +53,25 @@ export default {
       })
       .then((response)=>{
         this.userArticel = response.data.articles
-        this.avatar=this.userArticel[0].avatar
         // console.log(this.userArticel)
+      })
+    },
+    getUserAvatar(){
+      axios.get('http://localhost:3000/userinfo',{
+        params:{
+          userName: this.$route.params.userName
+        }
+      })
+      .then((response)=>{
+        // console.log(response)
+        this.avatar=response.data.userInfo[0].avatar
       })
     }
   },
   mounted(){
     this.userName=this.$route.params.userName
     this.getUserArticleInfo()
+    this.getUserAvatar()
   }
 }
 </script>

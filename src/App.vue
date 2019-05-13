@@ -9,25 +9,7 @@
 
 <script>
 export default {
-  name: 'App',
-  data(){
-    return {
-    }
-  },
-  methods:{
-    getNavbarHeight(){
-      let navbar=document.querySelector('.navbar')
-      let main=document.querySelector('.main')
-      let navbarHeight=navbar.getBoundingClientRect().height
-      main.style.marginTop=navbarHeight+'px'
-    }
-  },
-  // mounted(){
-  //   this.getNavbarHeight()
-  // },
-  // updated () {
-  //   this.getNavbarHeight()
-  // }
+  name: 'App'
 }
 </script>
 

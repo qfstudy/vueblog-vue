@@ -7,12 +7,25 @@
       <ul class="write-title-nav">
         <li class="submit" @click="saveDataToMql">发布文章</li>
         <li class="preview-submit" @click="preview">预览</li>
+        <li>
+          <a href="/">首页</a>
+          <!-- <router-link :to="{ name: 'Homepage'}">
+            首页							
+          </router-link> -->
+        </li>
       </ul>
     </section>
 
     <section class="write-content">
       <div class="content-wrapper" id="textarea">
-        <textarea @input="inputHandle" class="content" id="write-article" spellcheck="false"></textarea>
+        <!-- <pre class="content-copy">{{textareaValue}}</pre> -->
+        <textarea
+          @input="inputHandle" 
+          class="content" 
+          id="write-article" 
+          spellcheck="false"
+        >
+        </textarea>
       </div>
       <div class="preview-wrapper">
         <div class="preview-content markdown-body"></div>
@@ -43,22 +56,24 @@ export default {
     }
   },
   methods: {
-    setDivHeight(val){
+    setHeight(){
+      let html=document.querySelector('html')
       let body=document.querySelector('body')
-      let writeNavbar=document.querySelector('.write-navbar')
-      let titleWrapper=document.querySelector('.title-wrapper')
-      let writeTtitleNav=document.querySelector('.write-title-nav')
+      html.classList.add('hidden-overflow')
+      body.classList.add('hidden-overflow')
 
-      let writeContent=document.querySelector('.write-content')
-      let previewContent=document.querySelector('.preview-content')
-     
+      let navbar=document.querySelector('.write-navbar')
+
+      let textarea = document.querySelector('.content')
+      let preview = document.querySelector('.preview-wrapper')
+
       let bodyHeight=body.getBoundingClientRect().height
-      let writeNavbarHeight=writeNavbar.getBoundingClientRect().height
-      let titleWrapperHeight=titleWrapper.getBoundingClientRect().height
-      let writeTtitleNavHeight=writeTtitleNav.getBoundingClientRect().height
-    
-      writeContent.style.height=(bodyHeight-titleWrapperHeight-writeTtitleNavHeight-val)+'px'
-      previewContent.style.height=(bodyHeight-titleWrapperHeight-writeTtitleNavHeight-val)+'px'
+      let navbarHeight=navbar.getBoundingClientRect().height
+
+      textarea.style.height=(bodyHeight-navbarHeight)+'px'
+      preview.style.height=(bodyHeight-navbarHeight)+'px'
+
+      // console.log(textarea.style.height,preview.style.height)
     },
     preview(){
       if(this.isPreview){
@@ -104,6 +119,8 @@ export default {
         let res=response.data
         if(res.code===200){
           this.$root.tooltip(res.message,1)
+          // this.$router.push({name: 'Homepage'})
+          window.location.href="/"
         }
         if(res.code==400){
           this.$root.tooltip(res.message,1)
@@ -120,11 +137,8 @@ export default {
           // console.log(response)
           let res=response.data
           if(res.code!==200){
+            window.location.href="/signin"
             this.$root.tooltip(res.message,2)
-            let timer = setTimeout(()=>{
-              this.$router.push({name: 'Signin'})
-              clearTimeout(timer)
-            },2000)
           }
         })
     },
@@ -143,19 +157,16 @@ export default {
     }
   },
   mounted(){
+    this.$store.commit('checkLoginCookie')
     hljs.initHighlightingOnLoad()
     this.setUserName()
+    this.setHeight()
   }
 }
 </script>
 
-<style lang="scss">
-  html,body{
-    height: 100%;
-    overflow-y: hidden;
-  }
+<style lang="scss" scoped>
   .write-wrapper{
-    margin-top: 56px;
     .write-navbar{
       .title-wrapper{
         display: flex;
@@ -165,7 +176,7 @@ export default {
           font-size: 20px;
           border: none;
           width: 100%;
-          // border-top: 1px solid #ddd;
+          border-top: 1px solid #ddd;
         }
         input.title:focus {
           outline: none;
@@ -178,6 +189,7 @@ export default {
         width: 100%;
         height: 46px;
         background: #d9d9d9;
+        padding-right: 10px;
         .submit{
           display: inline-block;
           margin-right: 22px;
@@ -191,24 +203,15 @@ export default {
       }
     }
     .write-content{
-      // height: 100%;
       .content-wrapper{
-        display: flex;
-        height: 100%;
-        border-bottom: 1px solid #d9d9d9;
         .content{
-          resize: none;
+          overflow-y: auto;
+          resize:none;
           width: 100%;
-          // height: 100%;
-          border-color: transparent;
-          color: #333;
+          border: none;
           font-size: 18px;
-          font-weight: 400;
-          padding: 30px 38px;
-          padding-bottom: 60px;
-          word-wrap: break-word;
-          word-break: break-all;
-          // overflow-y: auto;
+          color: #333333;
+          padding: 10px;
         }
         .content:focus {
           outline: none;
@@ -226,21 +229,17 @@ export default {
     }
     .write-content.write-preview .content-wrapper{
       width: 50%;
-      border-bottom: 1px solid #d9d9d9;
-      background: #ffff;
     }
     .write-content.write-preview .preview-wrapper{
       width: 50%;
-      border-color: transparent;
-      color: #333;
-      font-size: 18px;
-      padding: 30px 38px;
-      padding-bottom: 60px;
-      // height: 83%;
+      border: none;
       background: #fcfaf2;
       border-left: 1px solid #e9e9e9;
       overflow-y: auto;
-      border-bottom: 1px solid #d9d9d9;
+      padding: 10px;
+      .preview-content{
+        font-size: 18px;
+      }
     }
   }
 </style>

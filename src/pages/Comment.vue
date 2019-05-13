@@ -9,10 +9,11 @@
         </textarea>   
       </div>
       <button class="submit" @click="saveCommentToMql">发送</button>
-    </section>
-
+    </section>      
     <section v-else class="no-signin">
-      <span class="signin">登录</span>
+      <router-link :to="{ name: 'Signin'}">
+        <span class="signin">登录</span>
+      </router-link>	
       <span class="signin-comment">后发表评论</span>
     </section>
     
@@ -184,11 +185,28 @@ export default {
       }
     }
     .no-signin{
-      .signin{}
-      .signin-comment{}
+      border: 1px solid #ddd;
+      width: 50%;
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #eee;
+      margin: 0 auto;
+      .signin{
+        border-radius: 5px;
+        background: #2175bc;
+        color: white;
+        padding: 2px 10px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+      .signin-comment{
+        padding-left: 10px;
+      }
     }
     .comment-content-wrapper{
-      border-top: 1px solid #eee;
+      border-top: 1px solid #ddd;
       margin-top: 80px;      
       .comment-wrapper{
         padding-left: 10px;
@@ -222,6 +240,8 @@ export default {
         }
       }
     }
-    .no-comment{}
+    .no-comment{
+      padding: 10px;
+    }
   }
 </style>

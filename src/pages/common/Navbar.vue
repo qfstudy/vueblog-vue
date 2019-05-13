@@ -37,9 +37,6 @@
         </router-link>
       </span>
     </div>
-    <!-- <div class="avatar-username">
-      
-    </div> -->
 	</header>
 </template>
 
@@ -90,7 +87,7 @@ export default {
       })
       .then((response)=>{
         let res=response.data
-        console.log(response)
+        // console.log(response)
         if(res.code===200 && res.userInfo.length>0){
           this.avatar=res.userInfo[0].avatar
           // console.log(this.avatar)
@@ -125,13 +122,11 @@ export default {
     }
   },
   mounted(){
-    // console.log('navbar munted')
     this.$store.commit('checkLoginCookie')
     this.setUserName()
     this.eventBusFn()
   },
   updated(){
-    // console.log('navbar update')
     this.$store.commit('checkLoginCookie')
   }
 }
