@@ -8,9 +8,9 @@
             <span class="user-name">{{userName}}</span>
             <span class="article-number">文章：{{userArticel.length}}</span>
           </div>
-        </div>
-        
+        </div>        
       </div>
+
       <div class="article-info-wrapper">
         <div class="article-info">
           <span class="articel-tab">个人文章</span>
@@ -21,8 +21,8 @@
             <router-link :to="{ name: 'Article', params: { articleId: item.id }}">
               <span class="title">{{item.title}}</span>
             </router-link>
-            <p class="content" v-if="item.content">{{item.content}}</p>
-            <p class="content" v-else>{{item.title}}</p>
+            <p class="content" v-if="item.content" v-html="item.content"></p>
+            <p class="content" v-else >{{item.title}}</p>
           </div>
         </div>
       </div>
@@ -124,11 +124,17 @@ export default {
             border-bottom: 1px solid #eee;
             padding-left: 10px;
             .title{
-              font-size: 28px;
+              font-size: 22px;
             }
             .content{
               padding: 10px 0;
               color: #a59fac;
+              display: -webkit-box;
+              font-size: 16px;
+              line-height: 1.8;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+              overflow: hidden;
             }
           }
         }

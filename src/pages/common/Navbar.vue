@@ -57,7 +57,7 @@ export default {
   methods: {
     navbarCheckPageLogin(){
       if(!this.userName){
-        this.$root.tooltip('还没有登录，无法访问',1)
+        this.$root.tooltip('还没有登录，无法访问',2)
         let timer=setTimeout(()=>{
           this.$router.push({name: 'Signin'})
           clearTimeout(timer)

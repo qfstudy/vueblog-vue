@@ -11,7 +11,7 @@
         </router-link>
       </section>
       <section class="homepage-content-wrapper">
-        <div class="content" v-if="item.content">{{item.content}}</div>
+        <div class="content" v-if="item.content" v-html="item.content"></div>
         <div class="content" v-else>{{item.title}}</div>
       </section>
       <section class="homepage-bottom-wrapper">

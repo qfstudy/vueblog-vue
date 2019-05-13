@@ -8,13 +8,13 @@ Vue.use(vuex)
 import axios from 'axios'
 axios.defaults.withCredentials = true
 
-let tooltip=(text)=>{
-  Vue.prototype.$toast({
-    message: text,
-    duration: 2,
-    position: 'middle',
-  })
-}
+// let tooltip=(text)=>{
+//   Vue.prototype.$toast({
+//     message: text,
+//     duration: 2,
+//     position: 'middle',
+//   })
+// }
 
 export default new vuex.Store({
   state: {

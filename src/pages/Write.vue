@@ -9,16 +9,12 @@
         <li class="preview-submit" @click="preview">预览</li>
         <li>
           <a href="/">首页</a>
-          <!-- <router-link :to="{ name: 'Homepage'}">
-            首页							
-          </router-link> -->
         </li>
       </ul>
     </section>
 
     <section class="write-content">
       <div class="content-wrapper" id="textarea">
-        <!-- <pre class="content-copy">{{textareaValue}}</pre> -->
         <textarea
           @input="inputHandle" 
           class="content" 
@@ -138,7 +134,7 @@ export default {
           let res=response.data
           if(res.code!==200){
             window.location.href="/signin"
-            this.$root.tooltip(res.message,2)
+            // this.$root.tooltip(res.message,2)
           }
         })
     },

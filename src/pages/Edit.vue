@@ -11,9 +11,6 @@
       <ul class="write-title-nav">
         <li class="submit" @click="saveEditArticleToMql">保存修改</li>
         <li class="preview-submit" @click="preview">预览</li>
-        <!-- <router-link :to="{ name: 'Homepage'}">
-          首页							
-        </router-link> -->
         <a href="/">首页</a>
       </ul>
     </section>
