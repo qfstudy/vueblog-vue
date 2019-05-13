@@ -6,7 +6,7 @@
       </router-link>
     </div>
     <div class="navbar-content">
-      <a target="__blank" href="https://github.com/qfstudy/koa2-blog">
+      <a target="__blank" href="https://github.com/qfstudy/vueblog-vue">
         GitHub
       </a>							
       <span class="user-page" @click="navbarCheckPageLogin">
