@@ -6,7 +6,7 @@ Vue.use(vuex)
 // Vue.use(toastPlugin)
 
 import axios from 'axios'
-axios.defaults.withCredentials = true
+// axios.defaults.withCredentials = true
 
 // let tooltip=(text)=>{
 //   Vue.prototype.$toast({

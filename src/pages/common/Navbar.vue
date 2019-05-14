@@ -41,93 +41,55 @@
 </template>
 
 <script>
-import axios from 'axios'
-axios.defaults.withCredentials=true
+import {signout, getUserInfo} from '../../API/fetchData.js'
 
 export default {
   name: 'Navbar',
   data(){
     return{
-      cookieValue: '',
       userName: '',
       avatar: '',
-      n: 1
     }
   },
   methods: {
+    async signoutClick(){
+      await signout().then((res)=>{
+        // let res=response.data
+        if(res.code===200){
+          this.$root.tooltip(res.message,1)
+        }
+        this.deleteUserName()
+      }).catch((error)=>{
+        console.log(error)
+      })
+    },
+    deleteUserName(){
+      this.userName=''
+    },
     navbarCheckPageLogin(){
       if(!this.userName){
         this.$root.tooltip('还没有登录，无法访问',2)
-        let timer=setTimeout(()=>{
-          this.$router.push({name: 'Signin'})
-          clearTimeout(timer)
-        },1000)
+        this.$router.push({name: 'Signin'})
       }
     },
-    setUserName(){
-      let timer=setInterval(()=>{
-        this.userName=this.$store.state.userName
-        this.cookieValue=this.$store.state.cookieValue
-        if((this.userName && this.cookieValue) || this.n>10){
-          console.log('this.userNamennn: '+this.userName,this.n)
-          this.n=1
-          if(this.userName && this.cookieValue){
-            this.getUserInfo()
-          }
-          clearInterval(timer)
-        }
-        this.n++
-      },50)
-    },
-    getUserInfo(){
-      axios.get('http://localhost:3000/signout',{
-        params:{
-          userName: this.userName
-        }
-      })
-      .then((response)=>{
-        let res=response.data
-        // console.log(response)
-        if(res.code===200 && res.userInfo.length>0){
-          this.avatar=res.userInfo[0].avatar
-          // console.log(this.avatar)
+    async checkUserInfo(){
+      await getUserInfo().then((res)=>{
+        console.log(res)
+        if(res.code===200){
+          this.avatar=res.userInfo.avatar
+          this.userName=res.userInfo.userName         
           return
         }
-      })
-    },
-    signoutClick(){
-      axios.post('http://localhost:3000/signout',{
-          userName: this.userName
-        })
-        .then((response)=>{
-          let res=response.data
-          if(res.code===200){
-            this.$root.tooltip(res.message,1)
-            // this.$store.commit('checkLoginCookie')
-          }
-          this.deleteUserName()
-        })
-    },
-
-    deleteUserName(){
-      this.userName=''
-      this.cookieValue=''
-    },
-
-    eventBusFn(){
-      this.$root.bus.$on('emitSetUserName',(val)=>{
-        this.$store.commit('checkLoginCookie')
-        this.setUserName()
+      }).catch((error)=>{
+        console.log(error)
       })
     }
   },
   mounted(){
-    this.$store.commit('checkLoginCookie')
-    this.setUserName()
-    this.eventBusFn()
-  },
-  updated(){
-    this.$store.commit('checkLoginCookie')
+    this.$root.bus.$on('emitCheckLogin',()=>{
+      this.checkUserInfo()
+    })
+    this.checkUserInfo()
   }
 }
 </script>

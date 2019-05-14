@@ -7,7 +7,7 @@
       <ul class="write-title-nav">
         <li class="submit" @click="saveDataToMql">发布文章</li>
         <li class="preview-submit" @click="preview">预览</li>
-        <li @click="writeToHomepage">首页</li>
+        <li class="write-to-homepage" @click="writeToHomepage">首页</li>
       </ul>
     </section>
 
@@ -35,9 +35,7 @@ import hljs from 'highlight.js'
 // idea.css github.css
 import 'highlight.js/styles/atelier-dune-light.css'
 import 'github-markdown-css'
-import axios from 'axios'
-axios.defaults.withCredentials=true
-
+import {saveWriteData} from '../API/fetchData.js'
 
 export default {
   name: 'Write',
@@ -46,7 +44,6 @@ export default {
       isPreview: true,
       isCheckInputValue: false,
       userName: '',
-      n: 1
     }
   },
   methods: {
@@ -103,17 +100,15 @@ export default {
       }
       this.isCheckInputValue=true
     },
-    saveDataToMql(){
+    async saveDataToMql(){
       this.checkInputValue()
       if(!this.isCheckInputValue){
         return
       }
-      axios.post('http://localhost:3000/write',{
-        title: document.querySelector('.title').value,
-        content: document.getElementById('write-article').value
-      }).then((response)=>{
-        // console.log('write response'+response)
-        let res=response.data
+      let title=document.querySelector('.title').value
+      let content=document.getElementById('write-article').value
+      await saveWriteData(title,content).then((res)=>{
+        console.log(res)
         if(res.code===200){
           this.$root.tooltip(res.message,1)
           this.$router.push({name: 'Homepage'})
@@ -124,38 +119,10 @@ export default {
       }).catch((error)=>{
         console.log(error)
       })
-    },
-    checkWriteLogin(){
-      axios.post('http://localhost:3000/writecheck',{
-          userName: this.userName
-        })
-        .then((response)=>{
-          // console.log(response)
-          let res=response.data
-          if(res.code!==200){
-            window.location.href="/signin"
-            // this.$root.tooltip(res.message,2)
-          }
-        })
-    },
-    setUserName(){
-      let timer=setInterval(()=>{
-        this.userName=this.$store.state.userName
-        this.cookieValue=this.$store.state.cookieValue
-        if((this.userName && this.cookieValue) || this.n>10){
-          // console.log('this.userNamennn+write: '+this.userName,this.n)
-          this.n=1
-          this.checkWriteLogin()
-          clearInterval(timer)
-        }
-        this.n++
-      },50)
     }
   },
   mounted(){
-    this.$store.commit('checkLoginCookie')
     hljs.initHighlightingOnLoad()
-    this.setUserName()
     this.setHeight()
   }
 }
@@ -194,6 +161,9 @@ export default {
         .preview-submit {
           display: inline-block;
           margin-right: 30px;
+          cursor: pointer;
+        }
+        .write-to-homepage{
           cursor: pointer;
         }
       }

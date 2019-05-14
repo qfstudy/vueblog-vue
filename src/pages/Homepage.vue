@@ -35,8 +35,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-axios.defaults.withCredentials=true
+import {getAllArticles} from '../API/fetchData.js'
 
 export default {
   name: 'Homepage',
@@ -47,16 +46,14 @@ export default {
     }
   },
   methods:{
-    getAllArticles(){
-      axios.get('http://localhost:3000/allarticles')
-        .then((response)=>{
-          // console.log(response)
-          this.articleData=response.data.articles
-          // console.log(this.articleData)
-        })
-        .catch(function(error){
-          console.log(error)
-        })
+    async getArticles(){
+      await getAllArticles().then((res)=>{
+        if(res.code==200){
+          this.articleData=res.articles
+        }
+      }).catch(function(error){
+        console.log(error)
+      })
     },
     removeBodyClass(){
       let html=document.querySelector('html')
@@ -67,7 +64,7 @@ export default {
   },
   mounted(){
     this.removeBodyClass()
-    this.getAllArticles() 
+    this.getArticles() 
   }
 }
 </script>

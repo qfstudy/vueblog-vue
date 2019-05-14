@@ -1,9 +1,10 @@
 <template>
   <div class="app-wrapper">
     <div>
-      <router-view class="navbar" name="navbar"></router-view>
+      <router-view :key="$route.fullpath" class="navbar" name="navbar"></router-view>
       <router-view class="main" name="main"></router-view>
     </div>
+    <!-- <router-view/> -->
   </div>
 </template>
 

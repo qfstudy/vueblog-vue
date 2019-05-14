@@ -38,8 +38,7 @@
 
 <script>
 import $ from 'jquery'
-import axios from 'axios'
-axios.defaults.withCredentials=true
+import {getComment,deleteComment,saveComment,getUserInfo} from '../API/fetchData.js'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atelier-dune-light.css'
 import 'github-markdown-css'
@@ -48,29 +47,28 @@ export default {
   name: 'Comment',
   data () {
     return {
+      articleId: '',
       userName: '',
+      avatar: '',
       checkCommentValue: false,
       commentContent: '',
-      n: 1
     }
   },
-  props:{
-    avatar: String
-  },
   methods: {
-    setUserName(){
-      let timer=setInterval(()=>{
-        this.userName=this.$store.state.userName
-        if(this.userName || this.n>10){
-          console.log('this.userNamennn+comment: '+this.userName,this.n)
-          this.n=1
-          clearInterval(timer)
+    async checkUserInfo(){
+      await getUserInfo().then((res)=>{
+        // console.log(res)
+        if(res.code===200){
+          this.avatar=res.userInfo.avatar
+          this.userName=res.userInfo.userName         
+          return
         }
-        this.n++
-      },50)
+      }).catch((error)=>{
+        console.log(error)
+      })
     },
     checkInputValue(){
-      console.log("$('.content').val().trim(): "+ $('.comment-input-content').val().trim())
+      // console.log("$('.content').val().trim(): "+ $('.comment-input-content').val().trim())
       if ($('.comment-input-content').val().trim() === '') {
         this.$root.tooltip('请输入评论',1)
         this.checkCommentValue=false
@@ -78,63 +76,53 @@ export default {
         this.checkCommentValue=true
       }
     },
-    saveCommentToMql(){
+    async saveCommentToMql(){
       this.checkInputValue()
       if(!this.checkCommentValue){
         return
       }
-      axios.post('http://localhost:3000/article/comment',{
-        userName: this.userName,
-        content: document.querySelector('.comment-input-content').value,
-        articleId: this.$route.params.articleId
-      })
-      .then((response)=>{
-        console.log(response)
-        if(response.data.code==200){
-          this.$root.tooltip(response.data.message,1)
-          this.getComment()
+      let content=document.querySelector('.comment-input-content').value
+      await saveComment(this.userName,content,this.articleId).then((res)=>{
+        console.log(res)
+        if(res.code==200){
+          this.$root.tooltip(res.message,1)
+          this.getAllComment()
           document.querySelector('.comment-input-content').value=''
         }else{
-          this.$root.tooltip(response.data.message,1)
+          this.$root.tooltip(res.message,1)
         }
       })
     },
-    getComment(){
-      axios.get('http://localhost:3000/article/comment',{
-        params: {
-          articleId: this.$route.params.articleId
-        }
-      })
-        .then((response)=>{
-          // console.log(response)
-          this.commentContent=response.data.commentArray
+    async getAllComment(){
+      await getComment(this.articleId)
+        .then((res)=>{
+          // console.log(res)
+          this.commentContent=res.commentArray
           // console.log(this.commentContent)          
         })
         .catch(function(error){
           console.log(error)
         })
     },
-    deleteComment(commentId){
+    async deleteComment(commentId){
       console.log(commentId)
-      axios.post('http://localhost:3000/article/comment/remove',{
-        id: commentId,
-        userName: this.userName,
-        articleId: this.$route.params.articleId
-      })
-      .then((response)=>{
-        // console.log(response)
-        if(response.data.code===200){
-          this.$root.tooltip(response.data.message,1)
-          this.getComment()
+      await deleteComment(commentId,this.userName,this.articleId).then((res)=>{
+        console.log(res)
+        if(res.code===200){
+          this.$root.tooltip(res.message,1)
+          this.getAllComment()
         }else{
-          this.$root.tooltip(response.data.message,1)
+          this.$root.tooltip(res.message,1)
         }
+      }).catch(error=>{
+        console.log(error)
       })
     }
   },
   mounted () {
-    this.getComment()
-    this.setUserName()
+    this.checkUserInfo()
+    this.articleId=this.$route.params.articleId
+    this.getAllComment()
   }
 }
 </script>

@@ -28,15 +28,14 @@
       </section>
     </div>
     <div class="comment-wrapper">
-      <comment :avatar="avatar"></comment>
+      <comment/>
     </div>
   </div>
 </template>
 
 <script>
 import $ from 'jquery'
-import axios from 'axios'
-axios.defaults.withCredentials=true
+import {getAnArticle,deleteAnArticle} from '../API/fetchData.js'
 import hljs from 'highlight.js'
 // idea.css github.css
 import 'highlight.js/styles/atelier-dune-light.css'
@@ -49,37 +48,32 @@ export default {
     return{
       articleDetail: '',
       userName: '', 
-      avatar: '',
-      n: 1
+      articleId: ''
     }
   },
   components:{
     Comment
   },
   methods:{
-    getArticleData(){
-      axios.get('http://localhost:3000/article',{
-        params: {
-          articleId: this.$route.params.articleId
-        }
+    async getArticleData(){
+      await getAnArticle(this.articleId).then((res)=>{
+        if(res.code===200){
+          this.articleDetail=res.articles  
+          //如果已登录就返回userName         
+          if(res.userName){
+            this.userName=res.userName
+          }   
+        }       
       })
-        .then((response)=>{
-          // console.log(response)
-          this.articleDetail=response.data.articles 
-          this.avatar=response.data.articles.avatar      
-        })
-        .catch(function(error){
-          console.log(error)
-        })
+      .catch(function(error){
+        console.log(error)
+      })
     },
-    deleteArticle(){
-      axios.post('http://localhost:3000/article/remove',{
-        articleId: this.$route.params.articleId
-      })
-      .then((response)=>{
-        console.log(response.data)
-        if(response.data.code===200){
-          this.$root.tooltip(response.data.message,1)
+    async deleteArticle(){
+      await deleteAnArticle(this.articleId).then((res)=>{
+        // console.log(res)
+        if(res.code===200){
+          this.$root.tooltip(res.message,1)
           this.$router.push({name: 'Homepage'})
         }else{
           this.$root.tooltip(response.data.message,1)
@@ -87,18 +81,8 @@ export default {
         }
       })
     },
-    setUserName(){
-      let timer=setInterval(()=>{
-        this.userName=this.$store.state.userName
-        this.cookieValue=this.$store.state.cookieValue
-        if((this.userName && this.cookieValue) || this.n>10){
-          this.n=1
-          clearInterval(timer)
-        }
-        this.n++
-      },50)
-    },
     initData(){
+      this.articleId=this.$route.params.articleId
       hljs.initHighlightingOnLoad()
       $(document).ready(function() {
         $('pre code').each(function(i, block) {
@@ -114,11 +98,9 @@ export default {
     }
   },
   mounted(){
-    this.removeBodyClass()
-    this.$store.commit('checkLoginCookie')
     this.initData()
+    this.removeBodyClass()
     this.getArticleData()
-    this.setUserName()
   }
 }
 </script>

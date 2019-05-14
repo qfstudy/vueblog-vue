@@ -39,19 +39,21 @@ import showdown from 'showdown'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atelier-dune-light.css'
 import 'github-markdown-css'
-import axios from 'axios'
-axios.defaults.withCredentials=true
+import {getEditArticle,saveEditArticle} from '../API/fetchData.js'
 
 export default {
   name: 'Edit',
   data () {
     return {
       isPreview: true,
-      // articleId: '',
+      articleId: '',
       originalArticle: ''
     }
   },
   methods: {
+    editToHomepage(){
+      this.$router.push({name: 'Homepage'})
+    },
     setHeight(){
       let html=document.querySelector('html')
       let body=document.querySelector('body')
@@ -71,17 +73,6 @@ export default {
 
       // console.log(textarea.style.height,preview.style.height)
     },
-    getArticleData(){
-      axios.get('http://localhost:3000/edit',{
-        params: {
-          articleId: this.$route.params.articleId
-        }
-      })
-      .then((response)=>{
-        // console.log(response.data)
-        this.originalArticle=response.data.article
-      })
-    },
     preview(){
       if(this.isPreview){
         $('.write-content').addClass('write-preview')      
@@ -100,6 +91,13 @@ export default {
         hljs.highlightBlock(block)
       })
     },
+    async getArticleData(){
+      await getEditArticle(this.articleId).then((res)=>{
+        console.log(res)
+        this.originalArticle=res.article
+      })
+    },
+   
     checkInputValue(){
       if ($('.title').val().trim() === '') {
         this.$root.tooltip('请输入标题',1)
@@ -113,21 +111,19 @@ export default {
       }
       this.isCheckInputValue=true
     },
-    saveEditArticleToMql(){
+    async saveEditArticleToMql(){
       this.checkInputValue()
       if(!this.isCheckInputValue){
         return
       }
-      axios.post('http://localhost:3000/edit',{
-        articleId: this.$route.params.articleId,
-        title: document.querySelector('.title').value,
-        content: document.getElementById('write-article').value
-      }).then((response)=>{
-        console.log('edit response'+response)
-        let res=response.data
+      let title=document.querySelector('.title').value
+      let content=document.getElementById('write-article').value
+      await saveEditArticle(this.articleId,title,content)
+      .then((res)=>{
+        console.log('edit response'+res)
         if(res.code===200){
           this.$root.tooltip(res.message,1)
-          this.$router.push({name: 'Article',params: { articleId: this.$route.params.articleId }})
+          this.$router.push({name: 'Article',params: { articleId: this.articleId }})
         }else{
           this.$root.tooltip(res.message,1)
         }
@@ -135,11 +131,10 @@ export default {
         console.log(error)
       })
     },
-    editToHomepage(){
-      this.$router.push({name: 'Homepage'})
-    }
+    
   },
   mounted(){
+    this.articleId=this.$route.params.articleId
     this.getArticleData()
     this.setHeight()
   }
@@ -179,6 +174,9 @@ export default {
         .preview-submit {
           display: inline-block;
           margin-right: 30px;
+          cursor: pointer;
+        }
+        .edit-to-homepage{
           cursor: pointer;
         }
       }

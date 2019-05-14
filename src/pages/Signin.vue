@@ -10,15 +10,14 @@
 
 <script>
 import $ from 'jquery'
-import axios from 'axios'
-axios.defaults.withCredentials=true
+import {signin} from '../API/fetchData.js'
 
 export default {
   name: 'Signin',
   data(){
     return{
       userName: '',
-      n: 1
+      password: '',
     }
   },
   methods:{
@@ -36,54 +35,31 @@ export default {
         this.$root.tooltip('请输入用户名或密码',1)
         return
       }
-      this.postUserData()
+      this.userName=$('.user-name').val().trim()
+      this.password=$('.password').val().trim()
+      this.userSignin()
+      
     },
 
-    postUserData(){
-      axios.post('http://localhost:3000/signin',{
-          name: $('.user-name').val().trim(),
-          password: $('.password').val().trim(),
-        })
-        .then((response)=>{
-          let res=response.data
-          if(res.code===200){
-            this.$root.tooltip(res.message,1)
-            $('.user-name').val('') 
-            $('.password').val('')
-            this.$root.bus.$emit('emitSetUserName')
-            this.$router.push({name: 'Homepage'})
-          }
-          if(res.code===500){
-            this.$root.tooltip(res.message,1)
-          }
-        })
-        .catch(function(error){
-          console.log(error)
-        })
-    },
-    setUserName(){
-      let timer=setInterval(()=>{
-        this.userName=this.$store.state.userName
-        this.cookieValue=this.$store.state.cookieValue
-        if((this.userName && this.cookieValue) || this.n>10){
-          console.log('this.userNamennn+write: '+this.userName,this.n)
-          this.checkLogin()
-          this.n=1
-          clearInterval(timer)
+    async userSignin(){
+      await signin(this.userName,this.password).then((res)=>{
+        if(res.code===200){
+          this.$root.tooltip(res.message,1)
+          $('.user-name').val('') 
+          $('.password').val('')
+          this.$root.bus.$emit('emitCheckLogin')
+          this.$router.push({name: 'Homepage'})
+        }else{
+          this.$root.tooltip(res.message,1)
         }
-        this.n++
-      },50)
-    },
-    checkLogin(){
-      if(this.userName){
-        this.$router.push({name: 'Homepage'})
-      }
+      }).catch(function(error){
+        console.log(error)
+        this.$root.tooltip(error.message,1)
+      })
     }
   },
-  mounted(){
-    // this.$store.commit('checkLoginCookie')
+  mounted(){    
     this.keyupEvent()
-    this.setUserName()
   }
 }
 </script>

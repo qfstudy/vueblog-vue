@@ -31,8 +31,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-axios.defaults.withCredentials=true
+import {getUserAllArticle} from '../API/fetchData.js'
 
 export default {
   name: 'Me',
@@ -41,37 +40,22 @@ export default {
       userName: '',
       userArticel: '',
       avatar: '',
-      n: 1
     }
   },
   methods: {
-    getUserArticleInfo(){
-      axios.get('http://localhost:3000/user',{
-        params:{
-          userName: this.$route.params.userName
-        }
-      })
-      .then((response)=>{
-        this.userArticel = response.data.articles
-        // console.log(this.userArticel)
-      })
-    },
-    getUserAvatar(){
-      axios.get('http://localhost:3000/userinfo',{
-        params:{
-          userName: this.$route.params.userName
-        }
-      })
-      .then((response)=>{
-        // console.log(response)
-        this.avatar=response.data.userInfo[0].avatar
+    async getUserArticleInfo(){
+      await getUserAllArticle(this.userName)
+      .then((res)=>{
+        this.userArticel = res.articles
+        this.avatar=res.articles[0].avatar
+      }).catch((error)=>{
+        console.log(error)
       })
     }
   },
   mounted(){
     this.userName=this.$route.params.userName
     this.getUserArticleInfo()
-    this.getUserAvatar()
   }
 }
 </script>

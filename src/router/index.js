@@ -33,6 +33,7 @@ export default new Router({
     {
       path: '/signin',
       name: 'Signin',
+      // component: Signin
       components: {
         main: Signin,
         navbar: Navbar

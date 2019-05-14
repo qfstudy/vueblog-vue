@@ -20,11 +20,17 @@
 
 <script>
 import $ from 'jquery'
-import axios from 'axios'
-axios.defaults.withCredentials=true
+import {signup} from '../API/fetchData.js'
 
 export default {
   name: 'Register',
+  data(){
+    return{
+      userName: '',
+      password: '',
+      avatar: ''
+    }
+  },
   methods:{
     keyupEvent(){
       let that=this
@@ -77,19 +83,16 @@ export default {
       }else if(!this.$refs.uploadAvatar.files[0]){
         this.$root.tooltip('请上传头像',2)
       }else{
+        this.userName=$('.user-name').val().trim()
+        this.password=$('.password').val().trim()
+        this.avatar=$('.preview-avatar')[0].src.trim()
         this.postUserData()
       }
     },
 
-    postUserData(){
-      axios.post('http://localhost:3000/signup',{
-          name: $('.user-name').val().trim(),
-          password: $('.password').val().trim(),
-          avatar: $('.preview-avatar')[0].src.trim()
-        })
-        .then((response)=>{
-          // console.log(response.data)
-          let res=response.data
+    async postUserData(){
+      await signup(this.userName,this.password,this.avatar)
+        .then((res)=>{
           if(res.code===200){
             this.$root.tooltip(res.message,1)
             $('.user-name').val('')
@@ -99,8 +102,7 @@ export default {
           }else{
             this.$root.tooltip(res.message,1)
           }
-        })
-        .catch(function(error){
+        }).catch(function(error){
           console.log(error)
         })
     }
