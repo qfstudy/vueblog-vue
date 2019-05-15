@@ -105,7 +105,7 @@ export default {
         })
     },
     async deleteComment(commentId){
-      console.log(commentId)
+      // console.log(commentId)
       await deleteComment(commentId,this.userName,this.articleId).then((res)=>{
         console.log(res)
         if(res.code===200){

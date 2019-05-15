@@ -15,7 +15,7 @@ function $fetch(method, url, data) {
   // console.log(method)
   // console.log(url)
   // console.log(data)
-  return new Promise((reslove, reject) => {
+  return new Promise((resolve, reject) => {
     $axios({
       method,
       url,
@@ -25,10 +25,10 @@ function $fetch(method, url, data) {
       console.log(res)
       let result = res.data
       if (result.code == 200 || result.code == 201) {
-        reslove(result)
-        console.log('66666666')
+        console.log('66666666resolve')
+        resolve(result)        
       } else {
-        console.log('55555555')
+        console.log('55555555result')
         reject(result)
       }
     }).catch(err => {

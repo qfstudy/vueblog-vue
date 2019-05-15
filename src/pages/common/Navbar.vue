@@ -74,7 +74,7 @@ export default {
     },
     async checkUserInfo(){
       await getUserInfo().then((res)=>{
-        console.log(res)
+        // console.log(res)
         if(res.code===200){
           this.avatar=res.userInfo.avatar
           this.userName=res.userInfo.userName         

@@ -34,7 +34,7 @@ export default {
   methods:{
     keyupEvent(){
       let that=this
-      $('body').keyup(function(e){
+      $('.signup-content').keyup(function(e){
         if(e.keyCode===13){
           that.checkInputValue()
         }
