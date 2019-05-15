@@ -76,26 +76,12 @@ export default {
         align-items: center;
         vertical-align: middle;
         background: #000;
-        opacity: 0.6;
+        opacity: 0.8;
         border-radius: 3px;
-        .vi-toast-icon-wrapper{                   
-          padding: 0.2em 0.4em;
-          .vi-toast-icon{
-            vertical-align: middle;
-            fill: #fff;                       
-          }
-        }
         .vi-toast-message{
+          color: white;
           padding: 0.42em 0.6em;
         }
-        // .vi-toast-line{
-        //   display: inline-block;
-        //   width: 1.7px;
-        //   background: #fff;
-        // }
-        // .vi-toast-close-button{
-        //   padding: 0.42em 0.3em;
-        // }
       }
     }
     .vi-toast.vi-toast-top{
