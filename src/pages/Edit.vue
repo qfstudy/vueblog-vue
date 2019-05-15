@@ -95,6 +95,8 @@ export default {
       await getEditArticle(this.articleId).then((res)=>{
         console.log(res)
         this.originalArticle=res.article
+      }).catch((error)=>{
+        console.log(error)
       })
     },
    

@@ -102,7 +102,7 @@ export default {
           }else{
             this.$root.tooltip(res.message,1)
           }
-        }).catch(function(error){
+        }).catch((error)=>{
           console.log(error)
         })
     }

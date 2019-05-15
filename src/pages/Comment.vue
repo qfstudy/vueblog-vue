@@ -91,6 +91,8 @@ export default {
         }else{
           this.$root.tooltip(res.message,1)
         }
+      }).catch((error)=>{
+        console.log(error)
       })
     },
     async getAllComment(){
@@ -99,8 +101,7 @@ export default {
           // console.log(res)
           this.commentContent=res.commentArray
           // console.log(this.commentContent)          
-        })
-        .catch(function(error){
+        }).catch((error)=>{
           console.log(error)
         })
     },

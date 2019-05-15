@@ -79,6 +79,8 @@ export default {
           this.$root.tooltip(response.data.message,1)
           this.$router.push({name: 'Homepage'})
         }
+      }).catch(function(error){
+        console.log(error)
       })
     },
     initData(){

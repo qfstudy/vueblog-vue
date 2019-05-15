@@ -6,35 +6,28 @@
       </router-link>
     </div>
     <div class="navbar-content">
-      <a target="__blank" href="https://github.com/qfstudy/vueblog-vue">
-        GitHub
-      </a>							
-      <span class="user-page" @click="navbarCheckPageLogin">
-        <router-link 
-          :to="{ name: 'User', params: { userName: userName ? userName : false}}">
-          我的主页							
-        </router-link>
+      <span>
+        <a target="__blank" href="https://github.com/qfstudy/vueblog-vue">
+          GitHub
+        </a>	
+      </span>						
+      <span class="user-page" @click="userpageCheckLogin">个人主页</span>
+      <span class="write-page" @click="writeCheckPageLogin">写文章</span>      
+      <span v-if="!userName">
+        <router-link :to="{ name: 'Signin'}">
+          登录							
+        </router-link>	
       </span>
-      <span class="user-page" @click="navbarCheckPageLogin">
-        <router-link :to="{ name: 'Write'}">
-          写文章							
-        </router-link>
-      </span>      
-      <router-link :to="{ name: 'Signin'}" v-if="!userName">
-        登录							
-      </router-link>	
-      <router-link :to="{ name: 'Register'}" v-if="!userName">
-        注册						
-      </router-link>	      				        
+      <span v-if="!userName">
+        <router-link :to="{ name: 'Register'}">
+          注册						
+        </router-link>	      
+      </span>				        
       <span class="signout" v-if="userName" @click="signoutClick">
         登出
       </span>
-      <span>
-        <router-link 
-          :to="{ name: 'User', params: { userName: userName ? userName : false}}"
-        >
-          <img :src="avatar" class="navbar-avatar" v-if="userName">			
-        </router-link>
+      <span @click="userpageCheckLogin">
+        <img :src="avatar" class="navbar-avatar" v-if="userName">        
       </span>
     </div>
 	</header>
@@ -66,10 +59,23 @@ export default {
     deleteUserName(){
       this.userName=''
     },
-    navbarCheckPageLogin(){
+    writeCheckPageLogin(){
       if(!this.userName){
         this.$root.tooltip('还没有登录，无法访问',2)
         this.$router.push({name: 'Signin'})
+        return
+      }
+      if(this.userName){
+        this.$router.push({name: 'Write'})
+      }
+    },
+    userpageCheckLogin(){
+      if(!this.userName){
+        this.$router.push({name: 'Homepage'})
+        return
+      }
+      if(this.userName){
+        this.$router.push({name: 'User',params:{userName: this.userName}})
       }
     },
     async checkUserInfo(){
@@ -108,6 +114,10 @@ export default {
     .navbar-content{
       display: flex;
       align-items: center;
+      span{
+        color: #666666;
+        padding: 5px;
+      }
       .signout{
         cursor: pointer;
         color: #666666;

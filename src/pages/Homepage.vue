@@ -51,7 +51,7 @@ export default {
         if(res.code==200){
           this.articleData=res.articles
         }
-      }).catch(function(error){
+      }).catch((error)=>{
         console.log(error)
       })
     },
