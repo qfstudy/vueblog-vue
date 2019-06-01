@@ -1,15 +1,18 @@
 import axios from 'axios'
 // const url = 'http://api.qifei.site'
-const url = 'http://localhost:3000'
+export const url = 'http://localhost:5000'
 let $axios = axios.create({
   baseURL: url + '/blog/',
+  withCredentials: true
 });
 
 // function getCookieValue(name) {
 //   let reg = new RegExp(name + '=' + '([^;]*)(;|$)')
 //   let result = reg.exec(document.cookie)
+//   console.log('cookie'+result)
 //   return (result && result[1]) || null
 // }
+// getCookieValue()
 
 function $fetch(method, url, data) {
   // console.log(method)
@@ -19,20 +22,16 @@ function $fetch(method, url, data) {
     $axios({
       method,
       url,
-      withCredentials: true,
       data: data
     }).then(res => {
       console.log(res)
       let result = res.data
       if (result.code == 200 || result.code == 201) {
-        console.log('66666666resolve')
         resolve(result)        
       } else {
-        console.log('55555555result')
         reject(result)
       }
     }).catch(err => {
-      console.log('111111111')
       reject(err)
     })
 
@@ -40,8 +39,8 @@ function $fetch(method, url, data) {
 }
 // method, url, data
 // 注册
-export const signup = (userName, password, avatar) => {
-  return $fetch('post','signup', {userName,password,avatar})
+export const signup = (userName, password) => {
+  return $fetch('post','signup', {userName,password})
 }
 
 // 登录
@@ -49,11 +48,16 @@ export const signin = (userName, password) => {
   return $fetch('post','signin', {userName,password})
 }
 
+// 验证码
+export const verifyCodeChange=()=>{
+  return $fetch('get','verifycode')
+}
+
 // 登出
 export const signout = () => {
   return $fetch('post','signout')
 }
-// 获取用户个人信息　比如头像，用户名等navbar
+// 获取用户个人信息　比如头像，用户名等
 export const getUserInfo = () => {
   return $fetch('get','getuserinfo')
 }
@@ -63,12 +67,12 @@ export const saveWriteData = (title, content) => {
   return $fetch('post','write', {title,content})
 }
 
-// 获取用户所有博客
+// 获取单个用户所有博客
 export const getUserAllArticle = (userName) => {
   return $fetch('post','userallarticle', {userName})
 }
 
-// 获取所有用户的博客
+// 获取所有的博客
 export const getAllArticles = () => {
   return $fetch('get','allarticles')
 }
@@ -104,3 +108,5 @@ export const getComment = (articleId) => {
 export const deleteComment = (commentId,userName,articleId) => {
   return $fetch('post','deleteusercomment',{commentId,userName,articleId})
 }
+
+

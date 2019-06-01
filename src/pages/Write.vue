@@ -2,7 +2,7 @@
   <div class="write-wrapper">
     <section class="write-navbar">
       <div class="title-wrapper">
-        <input placeholder="标题" type="text" class="title">
+        <input placeholder="标题" type="text" class="title" >
       </div>
       <ul class="write-title-nav">
         <li class="submit" @click="saveDataToMql">发布文章</li>
@@ -100,6 +100,31 @@ export default {
       }
       this.isCheckInputValue=true
     },
+    debounce(fn, wait){
+      let timeout = null;
+      return function() {
+        if(timeout !== null){ 
+          clearTimeout(timeout)
+        }
+        timeout = setTimeout(fn, wait)
+    }
+    },
+    async inputChangeSave(){
+      console.log('正在保存')
+      let title=document.querySelector('.title').value
+      let content=document.getElementById('write-article').value
+      await saveWriteData(title,content).then((res)=>{
+        // console.log(res)
+        if(res.code===200){
+          console.log('已经保存')
+        }
+        if(res.code==400){
+          this.$root.tooltip(res.message,1)
+        }
+      }).catch((error)=>{
+        console.log(error)
+      })
+    },
     async saveDataToMql(){
       this.checkInputValue()
       if(!this.isCheckInputValue){
@@ -108,16 +133,13 @@ export default {
       let title=document.querySelector('.title').value
       let content=document.getElementById('write-article').value
       await saveWriteData(title,content).then((res)=>{
-        console.log(res)
         if(res.code===200){
           this.$root.tooltip(res.message,1)
           this.$router.push({name: 'Homepage'})
         }
-        if(res.code==400){
-          this.$root.tooltip(res.message,1)
-        }
       }).catch((error)=>{
         console.log(error)
+        this.$root.tooltip(error.message,1)        
       })
     }
   },

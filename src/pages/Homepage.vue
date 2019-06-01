@@ -1,5 +1,6 @@
 <template>
   <div class="homepage-container">
+    <b-header></b-header>
     <div class="no-article" v-if="articleData.length<1">
       还没有文章，快去写一篇吧
     </div>
@@ -36,6 +37,7 @@
 
 <script>
 import {getAllArticles} from '../API/fetchData.js'
+import bHeader from './common/bHeader.vue'
 
 export default {
   name: 'Homepage',
@@ -44,6 +46,9 @@ export default {
       userName: '',
       articleData: ''
     }
+  },
+  components:{
+    bHeader
   },
   methods:{
     async getArticles(){
@@ -72,7 +77,6 @@ export default {
 <style lang="scss" scoped>
   .homepage-container{
     background: #fff;
-    margin-top: 56px;
     .homepage-main-wrapper{
       padding: 10px;
       border-bottom: 1px solid #e9e9e9;

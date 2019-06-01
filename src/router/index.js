@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Register from '../pages/Register'
+import Signup from '../pages/Signup'
 import Signin from '../pages/Signin'
 import Homepage from '../pages/Homepage'
-import Navbar from '../pages/common/Navbar.vue'
+// import Navbar from '../pages/common/Navbar.vue'
 import Write from '../pages/Write.vue'
 import Article from '../pages/Article.vue'
 import User from '../pages/User.vue'
@@ -17,57 +17,45 @@ export default new Router({
     {
       path: '/',
       name: 'Homepage',
-      components: {
-        main: Homepage,
-        navbar: Navbar
-      }
+      component: Homepage
     },
     {
       path: '/signup',
-      name: 'Register',
-      components: {
-        main: Register,
-        navbar: Navbar
-      }
+      name: 'Signup',
+      component: Signup
     },
     {
       path: '/signin',
       name: 'Signin',
-      // component: Signin
-      components: {
-        main: Signin,
-        navbar: Navbar
-      }
+      component: Signin
     },
     {
       path: '/write',
       name: 'Write',
-      components: {
-        main: Write
-      }
+      component: Write
     },
-    {
-      path: '/article/:articleId',
-      name: 'Article',
-      components: {
-        main: Article,
-        navbar: Navbar
-      }
-    },
-    {
-      path: '/user/:userName',
-      name: 'User',
-      components: {
-        main: User,
-        navbar: Navbar
-      }
-    },
-    {
-      path: '/edit/:articleId',
-      name: 'Edit',
-      components: {
-        main: Edit
-      }
-    }
+    // {
+    //   path: '/article/:articleId',
+    //   name: 'Article',
+    //   components: {
+    //     main: Article,
+    //     navbar: Navbar
+    //   }
+    // },
+    // {
+    //   path: '/user/:userName',
+    //   name: 'User',
+    //   components: {
+    //     main: User,
+    //     navbar: Navbar
+    //   }
+    // },
+    // {
+    //   path: '/edit/:articleId',
+    //   name: 'Edit',
+    //   components: {
+    //     main: Edit
+    //   }
+    // }
   ]
 })
