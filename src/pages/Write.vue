@@ -1,8 +1,15 @@
 <template>
   <div class="write-wrapper">
+    <b-header class="blog-header"></b-header>
     <section class="write-navbar">
       <div class="title-wrapper">
-        <input placeholder="标题" type="text" class="title" >
+        <input 
+          placeholder="标题" 
+          type="text" 
+          class="title" 
+          spellcheck="false"
+          v-model="titleValue"
+        >
       </div>
       <ul class="write-title-nav">
         <li class="submit" @click="saveDataToMql">发布文章</li>
@@ -11,13 +18,14 @@
       </ul>
     </section>
 
-    <section class="write-content">
+    <section class="write-content" :class="{'write-preview':isPreview}">
       <div class="content-wrapper" id="textarea">
         <textarea
           @input="inputHandle" 
           class="content" 
           id="write-article" 
           spellcheck="false"
+          v-model="textareaValue"
         >
         </textarea>
       </div>
@@ -32,23 +40,35 @@
 import $ from 'jquery'
 import showdown from 'showdown'
 import hljs from 'highlight.js'
-// idea.css github.css
+// highlight样式 idea.css github.css
 import 'highlight.js/styles/atelier-dune-light.css'
 import 'github-markdown-css'
 import {saveWriteData} from '../API/fetchData.js'
+import bHeader from './common/bHeader.vue'
 
 export default {
   name: 'Write',
   data(){
     return{
-      isPreview: true,
+      isPreview: false,
       isCheckInputValue: false,
       userName: '',
+      titleValue: '',
+      textareaValue: ''
     }
+  },
+  components:{
+    bHeader
   },
   methods: {
     writeToHomepage(){
       this.$router.push({name: 'Homepage'})
+    },
+    checkSignin(){
+      if(!this.userName){
+        this.$root.tooltip('还没有登录，无法操作')
+        this.$router.push({name: 'Homepage'})
+      }
     },
     setHeight(){
       let html=document.querySelector('html')
@@ -66,15 +86,9 @@ export default {
 
       textarea.style.height=(bodyHeight-navbarHeight)+'px'
       preview.style.height=(bodyHeight-navbarHeight)+'px'
-
       // console.log(textarea.style.height,preview.style.height)
     },
     preview(){
-      if(this.isPreview){
-        $('.write-content').addClass('write-preview')      
-      }else{
-        $('.write-content').removeClass('write-preview')
-      }
       this.inputHandle()
       this.isPreview=!this.isPreview
     },
@@ -87,52 +101,17 @@ export default {
         hljs.highlightBlock(block)
       })
     },
-    checkInputValue(){
-      if ($('.title').val().trim() === '') {
-        this.$root.tooltip('请输入标题',1)
-        this.isCheckInputValue=false
-        return
-      }
-      if(document.getElementById('write-article').value.trim()===''){
-        this.$root.tooltip('请输入内容',1)
-        this.isCheckInputValue=false
-        return
-      }
-      this.isCheckInputValue=true
-    },
-    debounce(fn, wait){
-      let timeout = null;
-      return function() {
-        if(timeout !== null){ 
-          clearTimeout(timeout)
-        }
-        timeout = setTimeout(fn, wait)
-    }
-    },
-    async inputChangeSave(){
-      console.log('正在保存')
-      let title=document.querySelector('.title').value
-      let content=document.getElementById('write-article').value
-      await saveWriteData(title,content).then((res)=>{
-        // console.log(res)
-        if(res.code===200){
-          console.log('已经保存')
-        }
-        if(res.code==400){
-          this.$root.tooltip(res.message,1)
-        }
-      }).catch((error)=>{
-        console.log(error)
-      })
-    },
+    
     async saveDataToMql(){
-      this.checkInputValue()
-      if(!this.isCheckInputValue){
+      if (!this.titleValue) {
+        this.$root.tooltip('请输入标题',1)
         return
       }
-      let title=document.querySelector('.title').value
-      let content=document.getElementById('write-article').value
-      await saveWriteData(title,content).then((res)=>{
+      if(!this.textareaValue){
+        this.$root.tooltip('请输入内容',1)
+        return
+      }
+      await saveWriteData(this.titleValue,this.textareaValue).then((res)=>{
         if(res.code===200){
           this.$root.tooltip(res.message,1)
           this.$router.push({name: 'Homepage'})
@@ -143,15 +122,24 @@ export default {
       })
     }
   },
-  mounted(){
+  mounted(){    
+    let timer=setTimeout(()=>{
+      this.userName=this.$store.state.userInfo.userName
+      // console.log(this.userName)
+      this.checkSignin()
+      clearTimeout(timer)
+    },0)
     hljs.initHighlightingOnLoad()
-    this.setHeight()
+    this.setHeight() 
   }
 }
 </script>
 
 <style lang="scss" scoped>
   .write-wrapper{
+    .blog-header{
+      display: none;
+    }
     .write-navbar{
       .title-wrapper{
         display: flex;

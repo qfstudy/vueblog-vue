@@ -11,22 +11,22 @@
     </div>
     <ul id="sel-option" class="sel-option" @click="clickHideLi($event)">
       <li data-flag="user" class="item" v-if="userName">
-        <svg class="icon-wo">
+        <svg class="icon-wo" data-li="li" data-flag="user">
           <use xlink:href="#icon-wo"></use>
         </svg>
-        <span>我的主页</span>
+        <span data-li="li" data-flag="user">我的主页</span>
       </li>
       <li data-flag="setting" class="item" v-if="userName">
-        <svg class="icon-shehzi">
+        <svg class="icon-shehzi" data-li="li" data-flag="setting">
           <use xlink:href="#icon-shezhi"></use>
         </svg>
-        <span>设置</span>
+        <span data-li="li" data-flag="setting">设置</span>
       </li>
       <li data-flag="signout" class="item" v-if="userName">
-        <svg class="icon-exit">
+        <svg class="icon-exit" data-li="li" data-flag="signout">
           <use xlink:href="#icon-exit"></use>
         </svg>
-        <span>登出</span>
+        <span data-li="li" data-flag="signout">登出</span>
       </li>
     </ul>
   </div>
@@ -56,12 +56,11 @@ export default {
       }
     },
     /*点击选项将内容替换到下拉框中并收起下拉选项*/
-    clickHideLi(e){
+    clickHideLi(e){      
       let selOption = document.getElementById('sel-option')
       let ev = e || window.event
       let target = ev.target || ev.srcElement
-      if (target && target.nodeName === 'LI') {
-        console.dir(target.dataset.flag)
+      if (target && (target.nodeName === 'LI' || target.dataset.li==='li')) {
         let dataFlag=target.dataset.flag
         switch(dataFlag){
           // case 'setting':

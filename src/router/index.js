@@ -34,28 +34,20 @@ export default new Router({
       name: 'Write',
       component: Write
     },
-    // {
-    //   path: '/article/:articleId',
-    //   name: 'Article',
-    //   components: {
-    //     main: Article,
-    //     navbar: Navbar
-    //   }
-    // },
-    // {
-    //   path: '/user/:userName',
-    //   name: 'User',
-    //   components: {
-    //     main: User,
-    //     navbar: Navbar
-    //   }
-    // },
-    // {
-    //   path: '/edit/:articleId',
-    //   name: 'Edit',
-    //   components: {
-    //     main: Edit
-    //   }
-    // }
+    {
+      path: '/article/:articleId',
+      name: 'Article',
+      component: Article
+    },
+    {
+      path: '/user/:userName',
+      name: 'User',
+      component: User
+    },
+    {
+      path: '/edit/:articleId',
+      name: 'Edit',
+      component: Edit
+    }
   ]
 })

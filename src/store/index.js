@@ -6,7 +6,9 @@ import mutations from './mutations'
 Vue.use(Vuex)
 
 const state={
-  userInfo: {}
+  userInfo: {},
+  // bHeader组件的height
+  bHeaderHeight:''
 }
 
 export default new Vuex.Store({

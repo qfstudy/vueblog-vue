@@ -3,9 +3,15 @@
     <section class="comment-write-wrapper" v-if="userName">
       <div class="content-write">
         <div class="user-avatar">
-          <img :src="avatar" alt="">
+          <img :src="avatar" alt="" v-if="avatar">
+          <img src="../assets/images/avatar-placeholder.svg" v-else>
         </div>
-        <textarea class="comment-input-content" spellcheck="false" placeholder="写下你的评论...  ">
+        <textarea 
+          class="comment-input-content" 
+          spellcheck="false" 
+          placeholder="写下你的评论...  "
+          v-model="textareaValue"
+        >
         </textarea>   
       </div>
       <button class="submit" @click="saveCommentToMql">发送</button>
@@ -20,13 +26,14 @@
     <section class="comment-content-wrapper">
       <div class="comment-wrapper" v-for="content in commentContent" :key="content.id">
         <div class="comment-user-info">
-          <img class="user-avatar" :src="content.avatar" alt="">
-          <span class="user-name">{{content.name}}</span>
+          <img class="user-avatar" :src="content.avatar" v-if="content.avatar">
+          <img class="user-avatar" src="../assets/images/avatar-placeholder.svg" v-else>
+          <span class="user-name">{{content.userName}}</span>
         </div>
         <div class="comment-content markdown-body" v-html="content.content"></div>
         <div class="comment-bottom">
-          <span class="comment-time">{{content.moment}}</span>
-          <span class="delete-comment-wrapper" v-if="content.name === userName" @click="deleteComment(content.id)">
+          <span class="comment-time">{{content.date}}</span>
+          <span class="delete-comment-wrapper" v-if="content.userName === userName" @click="deleteComment(content.id)">
             删除
           </span>
         </div>
@@ -37,8 +44,7 @@
 </template>
 
 <script>
-import $ from 'jquery'
-import {getComment,deleteComment,saveComment,getUserInfo} from '../API/fetchData.js'
+import {getComment,deleteComment,saveComment} from '../API/fetchData.js'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atelier-dune-light.css'
 import 'github-markdown-css'
@@ -50,46 +56,24 @@ export default {
       articleId: '',
       userName: '',
       avatar: '',
+      textareaValue: '',
       checkCommentValue: false,
       commentContent: '',
     }
   },
   methods: {
-    async checkUserInfo(){
-      await getUserInfo().then((res)=>{
-        // console.log(res)
-        if(res.code===200){
-          this.avatar=res.userInfo.avatar
-          this.userName=res.userInfo.userName         
-          return
-        }
-      }).catch((error)=>{
-        console.log(error)
-      })
-    },
-    checkInputValue(){
-      // console.log("$('.content').val().trim(): "+ $('.comment-input-content').val().trim())
-      if ($('.comment-input-content').val().trim() === '') {
-        this.$root.tooltip('请输入评论',1)
-        this.checkCommentValue=false
-			}else{
-        this.checkCommentValue=true
-      }
-    },
     async saveCommentToMql(){
-      this.checkInputValue()
-      if(!this.checkCommentValue){
+      if (this.textareaValue === '') {
+        this.$root.tooltip('请输入评论',1)
         return
-      }
-      let content=document.querySelector('.comment-input-content').value
+			}
+      let content=this.textareaValue
       await saveComment(this.userName,content,this.articleId).then((res)=>{
-        console.log(res)
+        // console.log(res)
         if(res.code==200){
           this.$root.tooltip(res.message,1)
           this.getAllComment()
-          document.querySelector('.comment-input-content').value=''
-        }else{
-          this.$root.tooltip(res.message,1)
+          this.textareaValue=''
         }
       }).catch((error)=>{
         console.log(error)
@@ -99,21 +83,17 @@ export default {
       await getComment(this.articleId)
         .then((res)=>{
           // console.log(res)
-          this.commentContent=res.commentArray
-          // console.log(this.commentContent)          
+          this.commentContent=res.data     
         }).catch((error)=>{
           console.log(error)
         })
     },
     async deleteComment(commentId){
-      // console.log(commentId)
       await deleteComment(commentId,this.userName,this.articleId).then((res)=>{
-        console.log(res)
+        // console.log(res)
         if(res.code===200){
           this.$root.tooltip(res.message,1)
           this.getAllComment()
-        }else{
-          this.$root.tooltip(res.message,1)
         }
       }).catch(error=>{
         console.log(error)
@@ -121,7 +101,10 @@ export default {
     }
   },
   mounted () {
-    this.checkUserInfo()
+    let timer=setTimeout(()=>{
+      this.userName=this.$store.state.userInfo.userName
+      clearTimeout(timer)
+    },0)
     this.articleId=this.$route.params.articleId
     this.getAllComment()
   }
@@ -130,11 +113,10 @@ export default {
 
 <style lang="scss" scoped>
   .comment-container{
-    .comment-write-wrapper{
-      padding-left: 10px;
-      margin-top: 20px;
+    .comment-write-wrapper{          
       display: flex;
       flex-direction: column;
+      padding-left: 10px;
       .content-write{
         display: flex;
         align-items: center;        
@@ -147,13 +129,16 @@ export default {
           }
         }
         .comment-input-content{
+          width: 30%;
           resize: none;  
-          width: 50%;
-          height: 80px;
           border: 1px solid #ddd;
           border-radius: 5px;
-          padding: 10px;
-          font-size: 18px;
+          padding: 4px;
+          height: 100px;
+          font-size: 16px;
+        }
+        ::placeholder{
+          font-size: 14px;
         }
         .comment-input-content:focus{
           outline: none;
@@ -165,9 +150,10 @@ export default {
         cursor: pointer;
         margin-top: 10px;
         width: 60px;
-        height: 40px;
-        margin-left: 50%;
-        background: #fff;
+        padding: 8px;
+        margin-left: 30%;
+        color: #fff;
+        background: #007fff;
       }
       .submit:focus{
         outline: none;
@@ -186,7 +172,7 @@ export default {
         border-radius: 5px;
         background: #2175bc;
         color: white;
-        padding: 2px 10px;
+        padding: 4px 10px;
         font-size: 18px;
         cursor: pointer;
       }
@@ -204,8 +190,8 @@ export default {
           display: flex;
           align-items: center;
           .user-avatar{            
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
           }
           .user-name{
@@ -215,10 +201,10 @@ export default {
         }
         .comment-content{
           padding: 10px 0;
-          font-size: 22px;
+          font-size: 20px;
         }
         .comment-bottom{
-          font-size: 16px;
+          font-size: 14px;
           .comment-time{
             color: #999;
           }

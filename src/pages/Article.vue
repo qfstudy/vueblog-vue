@@ -1,5 +1,6 @@
 <template>
   <div class="article-container">
+    <b-header class="homepage-header"></b-header>
     <div class="article-wrapper">
       <section class="article-title-content">
         <div class="title-wrapper">
@@ -35,12 +36,13 @@
 
 <script>
 import $ from 'jquery'
-import {getAnArticle,deleteAnArticle} from '../API/fetchData.js'
 import hljs from 'highlight.js'
 // idea.css github.css
 import 'highlight.js/styles/atelier-dune-light.css'
 import 'github-markdown-css'
+import {getAnArticle,deleteAnArticle} from '../API/fetchData.js'
 import Comment from './Comment'
+import bHeader from './common/bHeader.vue'
 
 export default {
   name: 'Article',
@@ -48,22 +50,23 @@ export default {
     return{
       articleDetail: '',
       userName: '', 
-      articleId: ''
+      articleId: '',
+      headerHeight: '',
     }
   },
   components:{
-    Comment
+    Comment,
+    bHeader
   },
   methods:{
     async getArticleData(){
       await getAnArticle(this.articleId).then((res)=>{
+        // console.log(res)
         if(res.code===200){
-          this.articleDetail=res.articles  
-          //如果已登录就返回userName         
-          if(res.userName){
-            this.userName=res.userName
-          }   
-        }       
+          this.articleDetail=res.data  
+        }else{
+          console.log('错误: ',res)
+        }      
       })
       .catch(function(error){
         console.log(error)
@@ -75,9 +78,6 @@ export default {
         if(res.code===200){
           this.$root.tooltip(res.message,1)
           this.$router.push({name: 'Homepage'})
-        }else{
-          this.$root.tooltip(response.data.message,1)
-          this.$router.push({name: 'Homepage'})
         }
       }).catch(function(error){
         console.log(error)
@@ -85,6 +85,11 @@ export default {
     },
     initData(){
       this.articleId=this.$route.params.articleId
+      this.headerHeight=this.$store.state.bHeaderHeight
+      let timer=setTimeout(()=>{
+        this.userName=this.$store.state.userInfo.userName
+        clearTimeout(timer)
+      },0)
       hljs.initHighlightingOnLoad()
       $(document).ready(function() {
         $('pre code').each(function(i, block) {
@@ -97,12 +102,20 @@ export default {
       let body=document.querySelector('body')
       html.classList.remove('hidden-overflow')
       body.classList.remove('hidden-overflow')
-    }
+    },
+    getHeaderHeight(){
+      let timer = setTimeout(()=>{
+        let mainEle=document.querySelector('.article-wrapper')
+        mainEle.style.marginTop=this.headerHeight+'px'
+        clearTimeout(timer)
+      },100)
+    },
   },
-  mounted(){
+  mounted(){ 
     this.initData()
     this.removeBodyClass()
     this.getArticleData()
+    this.getHeaderHeight()
   }
 }
 </script>
@@ -110,8 +123,13 @@ export default {
 <style lang="scss" scoped>
   // @import "../assets/css/github.css"
   .article-container{
-    margin-top: 56px;
-    background: #fff;
+    position: relative;
+    .homepage-header{
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: #fff;
+    }
     .article-wrapper{
       border-bottom: 1px solid #e9e9e9;
       padding-top: 10px;

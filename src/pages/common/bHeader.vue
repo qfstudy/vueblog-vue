@@ -103,7 +103,14 @@ export default {
         console.log(error)
       })
     },
+    getHeaderHeight(){
+      let bHeaderHeight = document.querySelector('.navbar-wrapper').getBoundingClientRect().height
+      this.addbHeaderHeight(bHeaderHeight)
+    },
     eventBus(){
+      // this.$root.bus.$on('emitCheckLogin',()=>{
+      //   this.checkUserSignin()
+      // })
       // this.$root.bus.$on('emitSetting',()=>{
       //   this.clickEditUserInfo()
       // })
@@ -111,14 +118,12 @@ export default {
         this.clickSignout()
       })
     },
-    ...mapActions(['addUserInfo'])
+    ...mapActions(['addUserInfo','addbHeaderHeight'])
   },
-  mounted(){
-    // this.$root.bus.$on('emitCheckLogin',()=>{
-    //   this.checkUserSignin()
-    // })
+  mounted(){    
     this.checkUserSignin()
     this.eventBus()
+    this.getHeaderHeight()
   }
 }
 </script>

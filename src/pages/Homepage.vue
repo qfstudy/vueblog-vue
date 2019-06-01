@@ -1,6 +1,6 @@
 <template>
   <div class="homepage-container">
-    <b-header></b-header>
+    <b-header class="homepage-header"></b-header>
     <div class="no-article" v-if="articleData.length<1">
       还没有文章，快去写一篇吧
     </div>
@@ -44,7 +44,8 @@ export default {
   data(){
     return{
       userName: '',
-      articleData: ''
+      articleData: '',
+      headerHeight: ''
     }
   },
   components:{
@@ -60,6 +61,20 @@ export default {
         console.log(error)
       })
     },
+    getHeaderHeight(){
+      let timer = setTimeout(()=>{
+        let mainEle=document.querySelector('.homepage-main-wrapper')
+        let noArticle=document.querySelector('.no-article')
+        // console.dir(document.querySelector('.homepage-main-wrapper'))
+        if(mainEle){
+          mainEle.style.marginTop=this.headerHeight+'px'
+        }
+        if(noArticle){
+          noArticle.style.marginTop=this.headerHeight+'px'
+        }
+        clearTimeout(timer)
+      },100)
+    },
     removeBodyClass(){
       let html=document.querySelector('html')
       let body=document.querySelector('body')
@@ -68,7 +83,9 @@ export default {
     }
   },
   mounted(){
+    this.headerHeight=this.$store.state.bHeaderHeight
     this.removeBodyClass()
+    this.getHeaderHeight()
     this.getArticles() 
   }
 }
@@ -76,7 +93,13 @@ export default {
 
 <style lang="scss" scoped>
   .homepage-container{
-    background: #fff;
+    position: relative;
+    .homepage-header{
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: #fff;
+    }
     .homepage-main-wrapper{
       padding: 10px;
       border-bottom: 1px solid #e9e9e9;
