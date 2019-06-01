@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import {mapActions} from 'vuex'
 import {signout, getUserInfo} from '../../API/fetchData.js'
 import viSelect from './viSelect.vue'
 
@@ -92,8 +93,11 @@ export default {
         // console.log(res.data)
         if(res.code===200){
           this.userName=res.data.userName
-          this.avatar=res.data.avatar        
-          return
+          this.avatar=res.data.avatar 
+          this.addUserInfo({
+            userName: this.userName,
+            avatar: this.avatar
+          })       
         }
       }).catch((error)=>{
         console.log(error)
@@ -106,7 +110,8 @@ export default {
       this.$root.bus.$on('emitSignout',()=>{
         this.clickSignout()
       })
-    }
+    },
+    ...mapActions(['addUserInfo'])
   },
   mounted(){
     // this.$root.bus.$on('emitCheckLogin',()=>{
