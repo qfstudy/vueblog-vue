@@ -2,8 +2,8 @@
   <div class="sel-wrap">
     <div id="sel-show" @click="hideOrShow" class="sel-show">
       <span class="avatar-wrapper" id="sel-show">
-        <img :src="avatar" id="sel-show" class="navbar-avatar" v-if="avatar&&userName">
-        <img src="../../assets/images/avatar-placeholder.svg" id="sel-show" v-if="userName">        
+        <img :src="headerAvatar" id="sel-show" class="navbar-avatar" v-if="avatar">
+        <img src="../../assets/images/avatar-placeholder.svg" id="sel-show" v-if="!avatar">        
       </span>
       <svg class="icon-select" id="sel-show">
         <use xlink:href="#icon-xiasanjiaoxing" id="sel-show"></use>
@@ -33,11 +33,14 @@
 </template>
 
 <script>
+import {url} from '../../API/fetchData.js'
+
 export default {
   name: 'Select',
   data(){
     return{
       flag: false,
+      headerAvatar: ''
     }
   },
   props:{
@@ -63,9 +66,12 @@ export default {
       if (target && (target.nodeName === 'LI' || target.dataset.li==='li')) {
         let dataFlag=target.dataset.flag
         switch(dataFlag){
-          // case 'setting':
-          //   this.$root.bus.$emit('emitSetting')
-          //   break
+          case 'user':
+            this.$root.bus.$emit('emitUser')
+            break
+          case 'setting':
+            this.$root.bus.$emit('emitSetting')
+            break
           case 'signout':
             this.$root.bus.$emit('emitSignout')
             break
@@ -98,6 +104,7 @@ export default {
     }
   },
   mounted(){
+    this.headerAvatar=url+'/images/avatar/'+this.avatar
     this.cllckHideList()
   }
 }

@@ -4,8 +4,9 @@
       <div class="title-wrapper">
         <input 
           placeholder="标题" 
-          type="text" class="title" 
-          :value="originalArticle.title"
+          type="text" 
+          class="title"           
+          v-model="titleValue"
         >
       </div>
       <ul class="write-title-nav">
@@ -15,14 +16,13 @@
       </ul>
     </section>
 
-    <section class="write-content">
+    <section class="write-content" :class="{'write-preview':isPreview}">
       <div class="content-wrapper" id="textarea">
         <textarea 
           @input="inputHandle" 
           class="content" 
-          id="write-article" 
-          spellcheck="false" 
-          :value="originalArticle.md"
+          spellcheck="false"           
+          v-model="textareaValue"
         >          
         </textarea>
       </div>
@@ -45,7 +45,9 @@ export default {
   name: 'Edit',
   data () {
     return {
-      isPreview: true,
+      isPreview: false,
+      titleValue: '',
+      textareaValue: '',
       articleId: '',
       originalArticle: ''
     }
@@ -70,22 +72,16 @@ export default {
 
       textarea.style.height=(bodyHeight-navbarHeight)+'px'
       preview.style.height=(bodyHeight-navbarHeight)+'px'
-
       // console.log(textarea.style.height,preview.style.height)
     },
     preview(){
-      if(this.isPreview){
-        $('.write-content').addClass('write-preview')      
-      }else{
-        $('.write-content').removeClass('write-preview')
-      }
       this.inputHandle()
       this.isPreview=!this.isPreview
     },
     inputHandle(){
       let converter = new showdown.Converter()
       let previewContent=document.querySelector('.preview-content')
-      let articleConten=document.getElementById('write-article').value
+      let articleConten=this.textareaValue
       previewContent.innerHTML=converter.makeHtml(articleConten).replace(/\n/gi,"<br/>")
       $('pre').each(function(i, block) {
         hljs.highlightBlock(block)
@@ -94,40 +90,31 @@ export default {
     async getArticleData(){
       await getEditArticle(this.articleId).then((res)=>{
         console.log(res)
-        this.originalArticle=res.article
+        this.originalArticle=res.data
+        this.titleValue=this.originalArticle.title
+        this.textareaValue=this.originalArticle.md
       }).catch((error)=>{
         console.log(error)
       })
     },
-   
-    checkInputValue(){
-      if ($('.title').val().trim() === '') {
-        this.$root.tooltip('请输入标题',1)
-        this.isCheckInputValue=false
-        return
-      }
-      if(document.getElementById('write-article').value.trim()===''){
-        this.$root.tooltip('请输入内容',1)
-        this.isCheckInputValue=false
-        return
-      }
-      this.isCheckInputValue=true
-    },
+
     async saveEditArticleToMql(){
-      this.checkInputValue()
-      if(!this.isCheckInputValue){
+      if (!this.titleValue) {
+        this.$root.tooltip('请输入标题',1)
         return
       }
-      let title=document.querySelector('.title').value
-      let content=document.getElementById('write-article').value
+      if(!this.textareaValue){
+        this.$root.tooltip('请输入内容',1)
+        return
+      }
+      let title=this.titleValue
+      let content=this.textareaValue
       await saveEditArticle(this.articleId,title,content)
       .then((res)=>{
-        console.log('edit response'+res)
+        console.log('edit response: ',res)
         if(res.code===200){
           this.$root.tooltip(res.message,1)
           this.$router.push({name: 'Article',params: { articleId: this.articleId }})
-        }else{
-          this.$root.tooltip(res.message,1)
         }
       }).catch((error)=>{
         console.log(error)

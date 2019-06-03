@@ -95,7 +95,7 @@ export default {
     inputHandle(){
       let converter = new showdown.Converter()
       let previewContent=document.querySelector('.preview-content')
-      let articleConten=document.getElementById('write-article').value
+      let articleConten=this.textareaValue
       previewContent.innerHTML=converter.makeHtml(articleConten).replace(/\n/gi,"<br/>")
       $('pre').each(function(i, block) {
         hljs.highlightBlock(block)

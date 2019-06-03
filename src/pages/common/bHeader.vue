@@ -3,7 +3,7 @@
     <div class="navbar-github">
       <a class="github-icon-wrap" target="__blank" href="https://github.com/qfstudy/vueblog-vue">
         <svg class="icon-github" aria-hidden="true">
-            <use xlink:href="#icon-github"></use>
+          <use xlink:href="#icon-github"></use>
         </svg>
       </a>	
     </div>
@@ -41,7 +41,7 @@
 
 <script>
 import {mapActions} from 'vuex'
-import {signout, getUserInfo} from '../../API/fetchData.js'
+import {url,signout, getUserInfo} from '../../API/fetchData.js'
 import viSelect from './viSelect.vue'
 
 export default {
@@ -50,6 +50,7 @@ export default {
     return{
       userName: '',
       avatar: '',
+      baseUrl: ''
     }
   },
   components:{
@@ -67,6 +68,11 @@ export default {
         console.log(error)
       })
     },
+
+    clickToUser(){
+      this.$router.push({name: 'User',params: { userName: this.userName}})
+    },
+
     checkWritePageLogin(){
       if(!this.userName){
         this.$root.tooltip('还没有登录，无法操作',2)
@@ -108,19 +114,20 @@ export default {
       this.addbHeaderHeight(bHeaderHeight)
     },
     eventBus(){
-      // this.$root.bus.$on('emitCheckLogin',()=>{
-      //   this.checkUserSignin()
-      // })
-      // this.$root.bus.$on('emitSetting',()=>{
-      //   this.clickEditUserInfo()
-      // })
+      this.$root.bus.$on('emitSetting',()=>{
+        this.$router.push({name: 'Setting',params: { userName: this.userName}})
+      })
+      this.$root.bus.$on('emitUser',()=>{
+        this.clickToUser()
+      })
       this.$root.bus.$on('emitSignout',()=>{
         this.clickSignout()
       })
     },
     ...mapActions(['addUserInfo','addbHeaderHeight'])
   },
-  mounted(){    
+  mounted(){   
+    this.baseUrl=url 
     this.checkUserSignin()
     this.eventBus()
     this.getHeaderHeight()
@@ -168,7 +175,6 @@ export default {
         fill: #bbb;
         position: absolute;
         right: 6px;
-        fill: #bbb;
       }
     }
     .navbar-content{

@@ -109,4 +109,9 @@ export const deleteComment = (commentId,userName,articleId) => {
   return $fetch('post','deleteusercomment',{commentId,userName,articleId})
 }
 
+// 上传头像----
+export const uploadAvatar = (userName, avatar) => $fetch('post', 'uploadavatar', {
+  avatar,
+  userName
+})
 

@@ -3,11 +3,11 @@ import Router from 'vue-router'
 import Signup from '../pages/Signup'
 import Signin from '../pages/Signin'
 import Homepage from '../pages/Homepage'
-// import Navbar from '../pages/common/Navbar.vue'
 import Write from '../pages/Write.vue'
 import Article from '../pages/Article.vue'
 import User from '../pages/User.vue'
 import Edit from '../pages/Edit.vue'
+import Setting from '../pages/Setting.vue'
 
 Vue.use(Router)
 
@@ -48,6 +48,11 @@ export default new Router({
       path: '/edit/:articleId',
       name: 'Edit',
       component: Edit
+    },
+    {
+      path: '/setting/:userName',
+      name: 'Setting',
+      component: Setting
     }
   ]
 })

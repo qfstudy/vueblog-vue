@@ -123,19 +123,19 @@ export default {
         .user-avatar{
           margin-right: 10px;
           img{
-            width: 56px;
-            height: 56px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
           }
         }
         .comment-input-content{
-          width: 30%;
+          width: 100%;
           resize: none;  
           border: 1px solid #ddd;
           border-radius: 5px;
           padding: 4px;
-          height: 100px;
           font-size: 16px;
+           margin-right: 10px;
         }
         ::placeholder{
           font-size: 14px;
@@ -151,9 +151,10 @@ export default {
         margin-top: 10px;
         width: 60px;
         padding: 8px;
-        margin-left: 30%;
         color: #fff;
         background: #007fff;
+        align-self: flex-end;
+        margin-right: 10px;
       }
       .submit:focus{
         outline: none;
@@ -181,8 +182,8 @@ export default {
       }
     }
     .comment-content-wrapper{
-      border-top: 1px solid #ddd;
-      margin-top: 80px;      
+      // border-top: 1px solid #ddd;
+      margin: 20px 0;      
       .comment-wrapper{
         padding-left: 10px;
         padding-top: 20px; 
