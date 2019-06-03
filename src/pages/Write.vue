@@ -53,6 +53,7 @@ export default {
       isPreview: false,
       isCheckInputValue: false,
       userName: '',
+      avatar: '',
       titleValue: '',
       textareaValue: ''
     }
@@ -111,7 +112,7 @@ export default {
         this.$root.tooltip('请输入内容',1)
         return
       }
-      await saveWriteData(this.titleValue,this.textareaValue).then((res)=>{
+      await saveWriteData(this.userName,this.avatar,this.titleValue,this.textareaValue).then((res)=>{
         if(res.code===200){
           this.$root.tooltip(res.message,1)
           this.$router.push({name: 'Homepage'})
@@ -125,6 +126,7 @@ export default {
   mounted(){    
     let timer=setTimeout(()=>{
       this.userName=this.$store.state.userInfo.userName
+      this.avatar=this.$store.state.userInfo.avatar
       // console.log(this.userName)
       this.checkSignin()
       clearTimeout(timer)

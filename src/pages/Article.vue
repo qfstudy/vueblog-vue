@@ -4,31 +4,40 @@
     <section class="main-container">
       <div class="main-left">
         <div class="icon-wrapper">
-          <span>
-            <svg class="icon-left">
-              <use xlink:href="#icon-dianzan"></use>
-            </svg>
-          </span>
-          <span>
-            <svg class="icon-left">
-              <use xlink:href="#icon-pinglun"></use>
-            </svg>
-          </span>
-          <span>
-            <svg class="icon-left">
-              <use xlink:href="#icon-shoucang1"></use>
-            </svg>
-          </span>              
+          <div class="icon-like-wrapper">
+            <span @click="saveLike" class="span-like" :class="{addLike: isLike}">
+              <svg class="icon-left icon-like">
+                <use xlink:href="#icon-dianzan"></use>
+              </svg>
+            </span>
+            <span class="span-linknum">{{articleDetail.likenum}}</span>
+          </div>
+          <div class="icon-comment-wrapper">
+            <span class="span-comment">
+              <svg class="icon-left">
+                <use xlink:href="#icon-pinglun"></use>
+              </svg>
+            </span>
+            <span class="span-comment-length">{{commentLength}}</span>
+          </div>
+          <div class="icon-collection-wrapper">
+            <span @click="saveCollection" class="span-collection" :class="{addCollection: isCollection}">
+              <svg class="icon-left icon-collection">
+                <use xlink:href="#icon-shoucang1"></use>
+              </svg>
+            </span>  
+          </div>                      
         </div>
       </div>
       <section class="main-center">
-        <div class="main-center-avatar">
-          <img  src="../assets/images/avatar-placeholder.svg" alt="">
+        <div class="main-center-avatar">        
+          <img :src="baseUrl+'/images/avatar/'+articleDetail.avatar" v-if="articleDetail.avatar">
+          <img  src="../assets/images/avatar-placeholder.svg" v-else>
           <div class="avatar-username">
-            <span class="user-name">userName</span>
+            <span class="user-name">{{articleDetail.name}}</span>
             <span class="date">
-              2014年04月26日
-              <span class="read-number">阅读1685</span>
+              {{articleDetail.date}}
+              <span class="read-number">阅读{{articleDetail.pv}}</span>
             </span>            
           </div>
         </div>
@@ -60,15 +69,16 @@
           </section>
         </div>
         <div class="comment-wrapper">
-          <comment/>
+          <comment :userName="userName" :avatar="avatar"></comment>
         </div>
       </section>
       <div class="main-right">
         <section class="about-author-wrapper">
           <span class="about-author">关于作者</span>
           <div class="author-avatar">
-            <img src="../assets/images/avatar-placeholder.svg">
-            <span class="author-name">userName</span>
+            <img :src="baseUrl+'/images/avatar/'+articleDetail.avatar" v-if="articleDetail.avatar">
+            <img src="../assets/images/avatar-placeholder.svg" v-else>
+            <span class="author-name">{{articleDetail.name}}</span>
           </div>
           <div class="article-info"> 
             <span>
@@ -76,7 +86,7 @@
                 <use xlink:href="#icon-dianzan"></use>
               </svg>
             </span>
-            <span class="info-text">获得点赞数60</span>
+            <span class="info-text">获得点赞数 {{articleDetail.likenum}}</span>
           </div>
           <div class="article-info">
             <span>
@@ -84,32 +94,31 @@
                 <use xlink:href="#icon-yuedu"></use>
               </svg>
             </span>
-            <span class="info-text">文章被阅读2609</span>
+            <span class="info-text">文章被阅读 {{articleDetail.pv}}</span>
           </div>
         </section>
         <section class="author-other-article">
-          <span class="other-article-tab">相关文章</span>
-          <div class="other-article-detail">
-            <p class="other-article-title">trrrrrrritle</p>
+          <span class="other-article-tab">作者其它文章</span>
+          <div class="other-article-detail" v-for="item in newArticleData" :key="item.id">
+            <p class="other-article-title">{{item.title}}</p>
             <div class="other-icon">
               <span class="icon-wrapper">
                 <svg class="icon-right">
                   <use xlink:href="#icon-dianzan"></use>
                 </svg> 
-                <span class="icon-text">6</span>
+                <span class="icon-text">{{item.likenum}}</span>
               </span>
               <span class="icon-wrapper">
                 <svg class="icon-right">
                   <use xlink:href="#icon-pinglun"></use>
                 </svg>
-                <span class="icon-text">6</span>
+                <span class="icon-text">{{item.comments}}</span>
               </span>
             </div>
           </div>
         </section>
       </div>
     </section>
-    
   </div>
 </template>
 
@@ -119,7 +128,7 @@ import hljs from 'highlight.js'
 // idea.css github.css
 import 'highlight.js/styles/atelier-dune-light.css'
 import 'github-markdown-css'
-import {getAnArticle,deleteAnArticle} from '../API/fetchData.js'
+import {url,getAnArticle,deleteAnArticle,saveCollection,saveLike,getCollection,getLike,getNewArticle} from '../API/fetchData.js'
 import Comment from './Comment'
 import bHeader from './common/bHeader.vue'
 
@@ -131,6 +140,12 @@ export default {
       userName: '', 
       articleId: '',
       headerHeight: '',
+      avatar: '',
+      baseUrl: '',
+      isCollection: false,
+      isLike: false,
+      commentLength: '',
+      newArticleData: []
     }
   },
   components:{
@@ -162,11 +177,56 @@ export default {
         console.log(error)
       })
     },
+    // 收藏
+    saveCollection(){
+      saveCollection(this.userName,this.articleId).then(res=>{
+        // console.log(res)
+        this.isCollection=!this.isCollection
+      })
+    },
+    // 获取收藏
+    getCollection(){
+      getCollection(this.userName,this.articleId).then(res=>{
+        // console.log(res)
+        if(res.code===200){
+          this.isCollection=true
+        }
+      })
+    },
+    // 点赞
+    saveLike(){
+      saveLike(this.userName,this.articleId).then(res=>{
+        // console.log(res)
+        this.isLike=!this.isLike
+      })
+    },
+     // 获取点赞
+    getLike(){
+      getLike(this.userName,this.articleId).then(res=>{
+        // console.log(res)
+        if(res.code=200){
+          this.isLike=true
+        }
+      })
+    },
+    // 获取五篇文章
+    getNewArticle(){
+      getNewArticle(this.userName).then(res=>{
+        this.newArticleData=res.data
+        console.log(res.data)
+      }).catch((error)=>{
+        console.log(error)
+      })
+    },
     initData(){
       this.articleId=this.$route.params.articleId
       this.headerHeight=this.$store.state.bHeaderHeight
       let timer=setTimeout(()=>{
         this.userName=this.$store.state.userInfo.userName
+        this.avatar=this.$store.state.userInfo.avatar
+        this.getLike()
+        this.getCollection()
+        this.getNewArticle()
         clearTimeout(timer)
       },0)
       hljs.initHighlightingOnLoad()
@@ -182,7 +242,7 @@ export default {
       html.classList.remove('hidden-overflow')
       body.classList.remove('hidden-overflow')
     },
-    getHeaderHeight(){
+    setHeaderHeight(){
       let timer = setTimeout(()=>{
         let mainEle=document.querySelector('.main-container')
         mainEle.style.marginTop=this.headerHeight+'px'
@@ -191,10 +251,14 @@ export default {
     },
   },
   mounted(){ 
-    this.initData()
+    this.$root.bus.$on('emitCommentLength',(value)=>{
+      this.commentLength=value
+    })
+    this.baseUrl=url   
+    this.initData() 
     this.removeBodyClass()
     this.getArticleData()
-    this.getHeaderHeight()
+    this.setHeaderHeight()
   }
 }
 </script>
@@ -214,6 +278,10 @@ export default {
       display: flex;
       width: 100%;
       .main-left{
+        position: fixed;
+        top: 56px;
+        left: 0;
+        height: 100%;
         background: #f4f5f5;
         width: 15%;
         .icon-wrapper{
@@ -222,15 +290,64 @@ export default {
           flex-direction: column;
           top: 22%;
           left: 10%;
-          span{
+          .icon-like-wrapper{
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 8px 0;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: #fff;
+            .span-like{
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin: 8px 0;
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              background: #fff;
+            }
+            .span-linknum{
+              font-size: 12px;
+              padding: 1px;
+              color: #bbb;
+            }
+          }
+          .icon-comment-wrapper{
+            display: flex;
+            .span-comment{
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin: 8px 0;
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              background: #fff;
+            }
+            .span-comment-length{
+              font-size: 12px;
+              padding: 1px;
+              color: #bbb;
+            }
+          }
+          .icon-collection-wrapper{
+            .span-collection{
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin: 8px 0;
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              background: #fff;
+            }
+          }
+          
+          .addCollection{
+            .icon-collection{
+              fill: #ffc347;   
+            }
+          }
+          .addLike{
+            .icon-like{
+              fill: #6cbd45;
+            }
           }
           .icon-left{           
             width: 26px;
@@ -244,6 +361,7 @@ export default {
         flex-grow: 1;
         width: 60%;
         margin-right: 25%;
+        margin-left:  15%;
         .main-center-avatar{
           display: flex;
           align-items: center;

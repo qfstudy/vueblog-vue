@@ -63,8 +63,8 @@ export const getUserInfo = () => {
 }
 
 // 写博客
-export const saveWriteData = (title, content) => {
-  return $fetch('post','write', {title,content})
+export const saveWriteData = (userName, avatar ,title, content) => {
+  return $fetch('post','write', {userName, avatar,title,content})
 }
 
 // 获取单个用户所有博客
@@ -97,8 +97,8 @@ export const deleteAnArticle = (articleId) => {
 }
 
 //保存评论
-export const saveComment = (userName,content,articleId) => {
-  return $fetch('post','saveusercomment',{userName,content,articleId})
+export const saveComment = (userName,avatar,content,articleId) => {
+  return $fetch('post','saveusercomment',{userName,avatar,content,articleId})
 }
 // 获取评论
 export const getComment = (articleId) => {
@@ -115,3 +115,32 @@ export const uploadAvatar = (userName, avatar) => $fetch('post', 'uploadavatar',
   userName
 })
 
+// 收藏
+export const saveCollection = (userName, articleId) => $fetch('post', 'addcollection', {
+  userName,
+  articleId
+})
+
+// 获取收藏
+export const getCollection = (userName, articleId) => $fetch('post', 'getcollection', {
+  userName,
+  articleId
+})
+
+// 点赞
+export const saveLike = (userName, articleId) => $fetch('post', 'addlike', {
+  userName,
+  articleId
+})
+
+// 获取点赞
+export const getLike = (userName, articleId) => $fetch('post', 'getlike', {
+  userName,
+  articleId
+})
+
+// getnewarticle
+
+export const getNewArticle = (userName) => $fetch('post', 'getnewarticle', {
+  userName
+})

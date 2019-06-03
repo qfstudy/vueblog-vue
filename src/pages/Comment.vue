@@ -3,7 +3,7 @@
     <section class="comment-write-wrapper" v-if="userName">
       <div class="content-write">
         <div class="user-avatar">
-          <img :src="avatar" alt="" v-if="avatar">
+          <img :src="baseUrl+'/images/avatar/'+avatar" alt="" v-if="avatar">
           <img src="../assets/images/avatar-placeholder.svg" v-else>
         </div>
         <textarea 
@@ -26,7 +26,7 @@
     <section class="comment-content-wrapper">
       <div class="comment-wrapper" v-for="content in commentContent" :key="content.id">
         <div class="comment-user-info">
-          <img class="user-avatar" :src="content.avatar" v-if="content.avatar">
+          <img class="user-avatar" :src="baseUrl+'/images/avatar/'+content.avatar" v-if="content.avatar">
           <img class="user-avatar" src="../assets/images/avatar-placeholder.svg" v-else>
           <span class="user-name">{{content.userName}}</span>
         </div>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import {getComment,deleteComment,saveComment} from '../API/fetchData.js'
+import {url,getComment,deleteComment,saveComment} from '../API/fetchData.js'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atelier-dune-light.css'
 import 'github-markdown-css'
@@ -54,12 +54,15 @@ export default {
   data () {
     return {
       articleId: '',
-      userName: '',
-      avatar: '',
       textareaValue: '',
       checkCommentValue: false,
       commentContent: '',
+      baseUrl: ''
     }
+  },
+  props:{
+    userName: '',
+    avatar: ''
   },
   methods: {
     async saveCommentToMql(){
@@ -68,7 +71,7 @@ export default {
         return
 			}
       let content=this.textareaValue
-      await saveComment(this.userName,content,this.articleId).then((res)=>{
+      await saveComment(this.userName,this.avatar,content,this.articleId).then((res)=>{
         // console.log(res)
         if(res.code==200){
           this.$root.tooltip(res.message,1)
@@ -83,7 +86,9 @@ export default {
       await getComment(this.articleId)
         .then((res)=>{
           // console.log(res)
-          this.commentContent=res.data     
+          this.commentContent=res.data 
+          let commentLength=this.commentContent.length
+          this.$root.bus.$emit('emitCommentLength',commentLength)    
         }).catch((error)=>{
           console.log(error)
         })
@@ -101,10 +106,7 @@ export default {
     }
   },
   mounted () {
-    let timer=setTimeout(()=>{
-      this.userName=this.$store.state.userInfo.userName
-      clearTimeout(timer)
-    },0)
+    this.baseUrl=url
     this.articleId=this.$route.params.articleId
     this.getAllComment()
   }
@@ -191,8 +193,8 @@ export default {
           display: flex;
           align-items: center;
           .user-avatar{            
-            width: 42px;
-            height: 42px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
           }
           .user-name{
