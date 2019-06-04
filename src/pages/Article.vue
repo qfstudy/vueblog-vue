@@ -290,8 +290,8 @@ export default {
           position: fixed;
           display: flex;
           flex-direction: column;
-          top: 22%;
-          left: 10%;
+          top: 30%;
+          left: 6%;
           .icon-like-wrapper{
             display: flex;
             .span-like{

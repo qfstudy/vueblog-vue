@@ -109,8 +109,14 @@ export default {
         this.userName=this.$store.state.userInfo.userName
         this.avatar=this.$store.state.userInfo.avatar
         this.getUserInfo()
+        this.checkSignin()
         clearTimeout(timer)
       },0)
+    },
+    checkSignin(){
+      if(!this.userName){
+        this.$router.push({name: 'Signin'})
+      }
     }
   },
   mounted(){

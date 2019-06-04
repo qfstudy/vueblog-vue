@@ -7,40 +7,32 @@
           <img src="../assets/images/avatar-placeholder.svg"  v-if="!avatar">
           <img :src="baseUrl+'/images/avatar/'+avatar" v-else>
         </div>
-        <div class="user-info-wrapper" >
+        <div class="user-info-wrapper">
           <section class="user-info">
             <div class="user-name">
-              <span>{{userData.userName}}</span>
+              <span>{{userName}}</span>
             </div> 
             <div class="github">
               <span>Github:</span>
               <a :href="userData.github" target="_black" v-if="userData.github">
                 {{userData.github}}
-              </a>
-              <router-link v-else :to="{name: 'Setting',params:{userName: userName}}">     
-                <input type="text" placeholder="添加Github链接">   
-              </router-link>   
+              </a>              
+              <input type="text" v-else @click="linkToSetting" placeholder="添加Github链接">                 
             </div>
             <div class="blog">
               <span>我的博客:</span>
               <a :href="userData.blog" target="_black" v-if="userData.blog">
                 {{userData.blog}}
-              </a>
-              <router-link v-else :to="{name: 'Setting',params:{userName: userName}}">
-                <input type="text" placeholder="添加博客网址"> 
-              </router-link>     
+              </a>              
+              <input type="text" v-else @click="linkToSetting" placeholder="添加博客网址">               
             </div>
             <div class="email">
               <span>我的邮箱:</span>
-              <span v-if="userData.email">{{userData.email}}</span> 
-              <router-link v-else :to="{name: 'Setting',params:{userName: userName}}">
-                <input type="text"  placeholder="添加邮箱">  
-              </router-link>   
+              <span v-if="userData.email">{{userData.email}}</span>             
+              <input type="text" v-else @click="linkToSetting" placeholder="添加邮箱">              
             </div>
           </section> 
-          <router-link :to="{name: 'Setting',params:{userName: userName}}" class="edit-user-info">
-            <span>编辑个人资料</span>  
-          </router-link> 
+          <span @click="linkToSetting" class="edit-user-info" v-if="siginUser">编辑个人资料</span>  
         </div>      
       </section>
       <section class="main-right">
@@ -112,6 +104,13 @@ export default {
     bHeader
   },
   methods:{
+    linkToSetting(){
+      if(this.userName){
+        this.$router.push({name: 'Setting',params: {userName: this.userName}})
+      }else{
+        this.$root.tooltip('没有登录无法继续操作')
+      }
+    },
     setUserInfoData(){
       let timer=setTimeout(()=>{
         this.userName=this.$store.state.userInfo.userName
@@ -249,9 +248,7 @@ export default {
             padding: 5px 5px;
             margin-bottom: 10px;
             border-radius: 5px;
-            span{
-              color: #007fff;
-            }
+            color: #007fff;
           }
         }
       }
