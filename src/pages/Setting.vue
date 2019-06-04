@@ -3,91 +3,52 @@
     <b-header class="b-header"></b-header>
     <div class="user-info-setting">
       <section class="edit-user-info">
-        <span class="title-tab">个人资料</span>
+        <span class="title-tab">{{userName}}个人资料</span>
         <div class="avatar-wrapper">
           <span>头像</span>          
-          <img :src="avatar" v-if="avatar">
+          <img :src="baseUrl+'/images/avatar/'+avatar" v-if="avatar">
           <img src="../assets/images/avatar-placeholder.svg" v-else>
           <div class="upload-avatar">
             <input type="file" class="input-upload" @click="clickUploadAvatar($event)">
             <span class="click-upload">点击上传</span>
           </div>
         </div>
-        <div class="user-name-wrapper">
-          <div class="user-name">
-            <span>用户名</span>
-            <input type="text">
-          </div>
-          <div class="edit-icon">
-            <svg class="icon-xiugai">
-              <use xlink:href="#icon-xiugai"></use>
-            </svg>
-            <span>修改</span>
-          </div>
-        </div>
-        <div class="introduction">
-          <div class="user-name">
-            <span>个人介绍</span>
-            <input type="text">
-          </div>
-          <div class="edit-icon">
-            <svg class="icon-xiugai">
-              <use xlink:href="#icon-xiugai"></use>
-            </svg>
-            <span>修改</span>
-          </div>
-        </div>
-        <div class="user-blog">
-          <div class="user-name">
-            <span>个人博客</span>
-            <input type="text">
-          </div>
-          <div class="edit-icon">
-            <svg class="icon-xiugai">
-              <use xlink:href="#icon-xiugai"></use>
-            </svg>
-            <span>修改</span>
-          </div>
-        </div>
-        <div class="user-github">
-          <div class="user-name">
-            <span>github</span>
-            <input type="text">
-          </div>
-          <div class="edit-icon">
-            <svg class="icon-xiugai">
-              <use xlink:href="#icon-xiugai"></use>
-            </svg>
-            <span>修改</span>
-          </div>
-        </div>
-        <div class="user-email">
-          <div class="user-name">
-            <span>email</span>
-            <input type="text">
-          </div>
-          <div class="edit-icon">
-            <svg class="icon-xiugai">
-              <use xlink:href="#icon-xiugai"></use>
-            </svg>
-            <span>修改</span>
-          </div>
-        </div>
       </section>
+      <section class="user-info-wrapper">
+        <div class="user-blog">
+          <span>个人博客</span>
+          <input v-model="inputBlogValue" type="text" spellcheck="false" placeholder="填写你的博客">
+        </div>
+        <div class="user-github">          
+          <span>github</span>
+          <input v-model="inputGithubValue" type="text" spellcheck="false" placeholder="填写你的github">          
+        </div>
+        <div class="user-email">          
+          <span>email</span>
+          <input v-model="inputEmailValue" type="text" spellcheck="false" placeholder="填写你的email">          
+        </div>
+        <span class="save-user-info" @click="saveUserInfo">保存</span>
+      </section>
+     
     </div>
   </div>
 </template>
 
 <script>
-import {url,uploadAvatar} from '../API/fetchData.js'
+import {url,uploadAvatar,getUserInfo,saveUserInfo} from '../API/fetchData.js'
 import bHeader from './common/bHeader.vue'
 export default {
   name: 'Setting',
   data(){
     return{
+      // ss: false,
       userName: '',
       avatar: '',
-      baseUrl: ''
+      baseUrl: '',
+      inputUserName: '',
+      inputBlogValue: '',
+      inputGithubValue: '',
+      inputEmailValue: ''
     }
   },
   components:{
@@ -112,7 +73,7 @@ export default {
             await uploadAvatar(_that.userName,imageData).then((res)=>{
               // console.log(res)
               if(res.code===200){
-                _that.avatar=_that.baseUrl+'/images/avatar/'+res.avatar
+                _that.avatar=res.avatar
               }
             }).catch(e=>{
               console.log(e)
@@ -123,10 +84,31 @@ export default {
         }
       }, false)
     },
+    getUserInfo(){
+      getUserInfo(this.userName).then((res)=>{
+        console.log(res)
+        this.inputUserName=res.data.userName
+        this.inputBlogValue=res.data.blog
+        this.inputGithubValue=res.data.github
+        this.inputEmailValue=res.data.email
+      })
+    },
+    saveUserInfo(){
+      let github=this.inputGithubValue
+      let blog=this.inputBlogValue
+      let email=this.inputEmailValue
+      saveUserInfo(this.avatar,github,blog,email,this.userName,).then(res=>{
+        // console.log(res)
+        if(res.code===200){
+          this.$router.push({name: 'User',params: { userName: this.userName}})
+        }
+      })
+    },
     setUserInfoData(){
       let timer=setTimeout(()=>{
         this.userName=this.$store.state.userInfo.userName
-        this.avatar=this.baseUrl+'/images/avatar/'+this.$store.state.userInfo.avatar
+        this.avatar=this.$store.state.userInfo.avatar
+        this.getUserInfo()
         clearTimeout(timer)
       },0)
     }
@@ -149,8 +131,9 @@ export default {
       background: #fff;
       margin: 15px 100px;
       padding: 30px 50px;
-      width: 60%;
+      width: 60%;    
       .edit-user-info{
+        border-bottom: 1px solid #ddd;
         .title-tab{
           font-size: 22px;
           font-weight: bold;
@@ -159,12 +142,6 @@ export default {
           padding: 10px 0;
           display: flex;
           justify-content: space-between;
-          div.edit-icon{
-            .icon-xiugai{
-              width: 30px;
-              height: 30px;              
-            }
-          }
         }
         .avatar-wrapper{
           display: flex;
@@ -200,8 +177,73 @@ export default {
               color: #fff;                    
             }
           }
+        } 
+      }
+      .user-info-wrapper{
+        display: flex;
+        flex-direction: column;
+        padding: 10px 0;
+        .user-blog{
+          display: flex;
+          align-items: center;
+          padding: 10px 0;
+          border-bottom: 1px solid #ddd;
+          span{
+            min-width: 20%;
+          }
+          input{
+            padding: 6px 6px;
+            width: 80%;
+            border: none;
+          }
+          input:focus{
+            outline: none;
+          }
+        }
+        .user-github{
+          display: flex;
+          align-items: center;
+          padding: 10px 0;
+          border-bottom: 1px solid #ddd;
+          span{
+            min-width: 20%;
+          }
+          input{
+            padding: 6px 6px;
+            width: 80%;
+            border: none;
+          }
+          input:focus{
+            outline: none;
+          }
+        }
+        .user-email{
+          display: flex;
+          align-items: center;
+          padding: 10px 0;
+          border-bottom: 1px solid #ddd;
+          span{
+            min-width: 20%;
+          }
+          input{
+            padding: 6px 6px;
+            width: 80%;
+            border: none;
+          }
+          input:focus{
+            outline: none;
+          }
+        }
+        .save-user-info{
+          padding: 6px 12px;
+          background: #007fff;
+          align-self: flex-end;
+          margin-top: 10px;
+          border-radius: 5px;
+          color: #fff;
         }
       }
+      
     }
   }
 </style>

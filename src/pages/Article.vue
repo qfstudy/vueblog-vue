@@ -182,13 +182,14 @@ export default {
       saveCollection(this.userName,this.articleId).then(res=>{
         // console.log(res)
         this.isCollection=!this.isCollection
+        this.getArticleData()
       })
     },
     // 获取收藏
     getCollection(){
       getCollection(this.userName,this.articleId).then(res=>{
         // console.log(res)
-        if(res.code===200){
+        if(res.code===200 && res.data){
           this.isCollection=true
         }
       })
@@ -198,13 +199,14 @@ export default {
       saveLike(this.userName,this.articleId).then(res=>{
         // console.log(res)
         this.isLike=!this.isLike
+        this.getArticleData()
       })
     },
      // 获取点赞
     getLike(){
       getLike(this.userName,this.articleId).then(res=>{
-        // console.log(res)
-        if(res.code=200){
+        // console.log(res.data)
+        if(res.code=200 && res.data){
           this.isLike=true
         }
       })

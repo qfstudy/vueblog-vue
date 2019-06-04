@@ -127,6 +127,11 @@ export const getCollection = (userName, articleId) => $fetch('post', 'getcollect
   articleId
 })
 
+// 获取所有收藏
+export const getAllCollection = (userName) => $fetch('post', 'getallcollection', {
+  userName
+})
+
 // 点赞
 export const saveLike = (userName, articleId) => $fetch('post', 'addlike', {
   userName,
@@ -139,8 +144,22 @@ export const getLike = (userName, articleId) => $fetch('post', 'getlike', {
   articleId
 })
 
-// getnewarticle
+// 获取所有点赞
+export const getAllLike = (userName) => $fetch('post', 'getalllike', {
+  userName
+})
 
+//　获取五篇文章 getnewarticle
 export const getNewArticle = (userName) => $fetch('post', 'getnewarticle', {
+  userName
+})
+
+// 保存用户信息 saveuserinfo
+
+export const saveUserInfo=(avatar,github,blog,email,userName)=>$fetch('post', 'saveuserinfo', {
+  avatar,
+  github,
+  blog,
+  email,
   userName
 })
