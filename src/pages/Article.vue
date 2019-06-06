@@ -31,10 +31,16 @@
       </div>
       <section class="main-center">
         <div class="main-center-avatar">        
-          <img :src="baseUrl+'/images/avatar/'+articleDetail.avatar" v-if="articleDetail.avatar">
+          <img 
+            :src="baseUrl+'/images/avatar/'+articleDetail.avatar" 
+            v-if="articleDetail.avatar"
+            @click="linkToUser(articleDetail.name)"
+          >
           <img  src="../assets/images/avatar-placeholder.svg" v-else>
           <div class="avatar-username">
-            <span class="user-name">{{articleDetail.name}}</span>
+            <span class="user-name" @click="linkToUser(articleDetail.name)">
+              {{articleDetail.name}}
+            </span>
             <span class="date">
               {{articleDetail.date}}
               <span class="read-number">阅读{{articleDetail.pv}}</span>
@@ -76,9 +82,15 @@
         <section class="about-author-wrapper">
           <span class="about-author">关于作者</span>
           <div class="author-avatar">
-            <img :src="baseUrl+'/images/avatar/'+articleDetail.avatar" v-if="articleDetail.avatar">
+            <img 
+              :src="baseUrl+'/images/avatar/'+articleDetail.avatar" 
+              v-if="articleDetail.avatar"
+              @click="linkToUser(articleDetail.name)"
+            >
             <img src="../assets/images/avatar-placeholder.svg" v-else>
-            <span class="author-name">{{articleDetail.name}}</span>
+            <span class="author-name" @click="linkToUser(articleDetail.name)">
+              {{articleDetail.name}}
+            </span>
           </div>
           <div class="article-info"> 
             <span>
@@ -100,7 +112,9 @@
         <section class="author-other-article">
           <span class="other-article-tab">作者其它文章</span>
           <div class="other-article-detail" v-for="item in newArticleData" :key="item.id">
-            <p class="other-article-title">{{item.title}}</p>
+            <router-link :to="{ name: 'Article', params: { articleId: item.id }}">
+              <p class="other-article-title">{{item.title}}</p>
+            </router-link>
             <div class="other-icon">
               <span class="icon-wrapper">
                 <svg class="icon-right">
@@ -145,6 +159,7 @@ export default {
       isCollection: false,
       isLike: false,
       commentLength: '',
+      articleAuthor: '',
       newArticleData: []
     }
   },
@@ -153,11 +168,22 @@ export default {
     bHeader
   },
   methods:{
+    linkToUser(userName){
+      this.$router.push({name: 'User',params:{userName: userName}})
+    },
     async getArticleData(){
       await getAnArticle(this.articleId).then((res)=>{
+        // console.log(this.articleId)
         // console.log(res)
         if(res.code===200){
           this.articleDetail=res.data  
+          this.articleAuthor=this.articleDetail.name
+          this.getNewArticle()
+          $('document').ready(function() {
+            $('pre code').each(function(i, block) {
+              hljs.highlightBlock(block);
+            })
+          })
         }else{
           console.log('错误: ',res)
         }      
@@ -192,6 +218,8 @@ export default {
         if(res.code===200 && res.data){
           this.isCollection=true
         }
+      }).catch((error)=>{
+        console.log(error)
       })
     },
     // 点赞
@@ -209,13 +237,15 @@ export default {
         if(res.code=200 && res.data){
           this.isLike=true
         }
+      }).catch((error)=>{
+        console.log(error)
       })
     },
     // 获取五篇文章
     getNewArticle(){
-      getNewArticle(this.userName).then(res=>{
+      getNewArticle(this.articleAuthor).then(res=>{
         this.newArticleData=res.data
-        console.log(res.data)
+        // console.log(res.data)
       }).catch((error)=>{
         console.log(error)
       })
@@ -228,15 +258,9 @@ export default {
         this.avatar=this.$store.state.userInfo.avatar
         this.getLike()
         this.getCollection()
-        this.getNewArticle()
         clearTimeout(timer)
       },0)
       hljs.initHighlightingOnLoad()
-      $(document).ready(function() {
-        $('pre code').each(function(i, block) {
-          hljs.highlightBlock(block);
-        })
-      })
     },
     removeBodyClass(){
       let html=document.querySelector('html')
@@ -251,6 +275,13 @@ export default {
         clearTimeout(timer)
       },100)
     },
+  },
+  watch:{
+    $route(to,from){
+      this.articleId=this.$route.params.articleId
+      this.getArticleData()
+      this.$root.bus.$emit('emitGetComment',this.articleId)    
+    }
   },
   mounted(){ 
     this.$root.bus.$on('emitCommentLength',(value)=>{
@@ -303,6 +334,7 @@ export default {
               height: 36px;
               border-radius: 50%;
               background: #fff;
+              cursor: pointer;
             }
             .span-linknum{
               font-size: 12px;
@@ -338,6 +370,7 @@ export default {
               height: 36px;
               border-radius: 50%;
               background: #fff;
+              cursor: pointer;
             }
           }
           
@@ -372,6 +405,7 @@ export default {
             width: 46px;
             height: 46px;
             border-radius: 50%;
+            cursor: pointer;
           }
           .avatar-username{
             display: flex;
@@ -379,6 +413,7 @@ export default {
             .user-name{
               padding-left: 16px; 
               font-weight: 600;
+              cursor: pointer;
             }
             .date{
               font-size: 14px;
@@ -456,11 +491,13 @@ export default {
               width: 46px;
               height: 46px;
               border-radius: 50%;
+              cursor: pointer;
             }
             .author-name{
               padding-left: 10px;
               font-size: 16px;
               font-weight: 600;
+              cursor: pointer;
             }
           }
           .article-info{

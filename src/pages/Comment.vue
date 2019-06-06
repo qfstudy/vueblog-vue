@@ -3,7 +3,7 @@
     <section class="comment-write-wrapper" v-if="userName">
       <div class="content-write">
         <div class="user-avatar">
-          <img :src="baseUrl+'/images/avatar/'+avatar" alt="" v-if="avatar">
+          <img :src="baseUrl+'/images/avatar/'+avatar" @click="linkToUser(userName)" v-if="avatar">          
           <img src="../assets/images/avatar-placeholder.svg" v-else>
         </div>
         <textarea 
@@ -26,9 +26,16 @@
     <section class="comment-content-wrapper">
       <div class="comment-wrapper" v-for="content in commentContent" :key="content.id">
         <div class="comment-user-info">
-          <img class="user-avatar" :src="baseUrl+'/images/avatar/'+content.avatar" v-if="content.avatar">
+          <img 
+            class="user-avatar" 
+            :src="baseUrl+'/images/avatar/'+content.avatar" 
+            v-if="content.avatar"
+            @click="linkToUser(content.userName)"
+          >
           <img class="user-avatar" src="../assets/images/avatar-placeholder.svg" v-else>
-          <span class="user-name">{{content.userName}}</span>
+          <span class="user-name" @click="linkToUser(content.userName)">
+            {{content.userName}}
+          </span>
         </div>
         <div class="comment-content markdown-body" v-html="content.content"></div>
         <div class="comment-bottom">
@@ -65,6 +72,9 @@ export default {
     avatar: ''
   },
   methods: {
+    linkToUser(userName){
+      this.$router.push({name: 'User',params:{userName: userName}})
+    },
     async saveCommentToMql(){
       if (this.textareaValue === '') {
         this.$root.tooltip('请输入评论',1)
@@ -106,6 +116,10 @@ export default {
     }
   },
   mounted () {
+    this.$root.bus.$on('emitGetComment',(articleId)=>{
+      this.articleId=articleId
+      this.getAllComment()
+    })
     this.baseUrl=url
     this.articleId=this.$route.params.articleId
     this.getAllComment()
@@ -128,6 +142,7 @@ export default {
             width: 46px;
             height: 46px;
             border-radius: 50%;
+            cursor: pointer;
           }
         }
         .comment-input-content{
@@ -196,10 +211,12 @@ export default {
             width: 46px;
             height: 46px;
             border-radius: 50%;
+            cursor: pointer;
           }
           .user-name{
             font-size: 22px;
             padding-left: 10px;
+            cursor: pointer;
           }
         }
         .comment-content{

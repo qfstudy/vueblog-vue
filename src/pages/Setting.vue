@@ -86,7 +86,7 @@ export default {
     },
     getUserInfo(){
       getUserInfo(this.userName).then((res)=>{
-        console.log(res)
+        // console.log(res)
         this.inputUserName=res.data.userName
         this.inputBlogValue=res.data.blog
         this.inputGithubValue=res.data.github
@@ -165,13 +165,15 @@ export default {
             display: flex;
             align-items: center;
             position: relative;
-            background: #007fff;    
+            background: #007fff;  
+            cursor: pointer;  
             width: 82px;
             .input-upload{
               height: 8px;
               width: 74px;
               opacity: 0;
-              z-index: 99;              
+              z-index: 99;  
+              cursor: pointer;             
             }
             .input-upload:focus{
               outline: none;
@@ -180,7 +182,8 @@ export default {
               position: absolute;
               left: 2px;
               font-size: 14px;   
-              color: #fff;                    
+              color: #fff;    
+              cursor: pointer;                
             }
           }
         } 
@@ -247,6 +250,7 @@ export default {
           margin-top: 10px;
           border-radius: 5px;
           color: #fff;
+          cursor: pointer;
         }
       }
       

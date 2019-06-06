@@ -14,7 +14,7 @@ function $fetch(method, url, data) {
       url,
       data: data
     }).then(res => {
-      console.log(res)
+      // console.log(res)
       let result = res.data
       if (result.code == 200 || result.code == 201) {
         resolve(result)        
@@ -50,6 +50,11 @@ export const signout = () => {
 // 获取用户个人信息　比如头像，用户名等
 export const getUserInfo = () => {
   return $fetch('get','getuserinfo')
+}
+
+// 没有登录情况下获取用户信息 getusernosignin
+export const getUserNoSignin = (userName) => {
+  return $fetch('post','getusernosignin',{userName})
 }
 
 // 写博客
@@ -155,6 +160,6 @@ export const saveUserInfo=(avatar,github,blog,email,userName)=>$fetch('post', 's
 })
 
 // 搜索
-export const searcharticle=(articleId)=>$fetch('post', 'searcharticle', {
-  articleId
+export const searcharticle=(title)=>$fetch('post', 'searcharticle', {
+  title
 })

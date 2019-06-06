@@ -89,7 +89,7 @@ export default {
     },
     async getArticleData(){
       await getEditArticle(this.articleId).then((res)=>{
-        console.log(res)
+        // console.log(res)
         this.originalArticle=res.data
         this.titleValue=this.originalArticle.title
         this.textareaValue=this.originalArticle.md
@@ -111,7 +111,7 @@ export default {
       let content=this.textareaValue
       await saveEditArticle(this.articleId,title,content)
       .then((res)=>{
-        console.log('edit response: ',res)
+        // console.log('edit response: ',res)
         if(res.code===200){
           this.$root.tooltip(res.message,1)
           this.$router.push({name: 'Article',params: { articleId: this.articleId }})

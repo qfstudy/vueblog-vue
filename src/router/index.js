@@ -8,6 +8,7 @@ import Article from '../pages/Article.vue'
 import User from '../pages/User.vue'
 import Edit from '../pages/Edit.vue'
 import Setting from '../pages/Setting.vue'
+import Search from '../pages/Search.vue'
 
 Vue.use(Router)
 
@@ -53,6 +54,11 @@ export default new Router({
       path: '/setting/:userName',
       name: 'Setting',
       component: Setting
+    },
+    {
+      path: '/search',
+      name: 'Search',
+      component: Search
     }
   ]
 })

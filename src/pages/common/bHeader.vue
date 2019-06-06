@@ -8,10 +8,19 @@
       </a>	
     </div>
     <div class="search-wraper">
-      <input type="text" placeholder="搜索" class="search-input">
+      <router-link :to="{ name: 'Search'}">      
+        <input 
+          v-model="inputSearch" 
+          type="text" 
+          v-focus
+          placeholder="搜索" 
+          class="search-input" 
+          @input="searchArticle"
+        >
+      </router-link>
       <svg class="icon-search" aria-hidden="true">
         <use xlink:href="#icon-search"></use>
-      </svg>
+      </svg>      
     </div>
     <div class="navbar-content">
       <router-link :to="{ name: 'Homepage'}" class="homepage-text">
@@ -41,7 +50,7 @@
 
 <script>
 import {mapActions} from 'vuex'
-import {url,signout, getUserInfo} from '../../API/fetchData.js'
+import {url,signout, getUserInfo, searcharticle} from '../../API/fetchData.js'
 import viSelect from './viSelect.vue'
 
 export default {
@@ -50,15 +59,29 @@ export default {
     return{
       userName: '',
       avatar: '',
-      baseUrl: ''
+      baseUrl: '',
+      inputSearch: '',
+      searchResult: ''
     }
   },
   components:{
     viSelect
   },
   methods: {
-    async clickSignout(){
-      await signout().then((res)=>{ 
+    searchArticle(){
+      if (this.inputSearch !== ''){
+        searcharticle(this.inputSearch).then(res=>{
+          // console.log(res.data)
+          this.searchResult = res.data
+          this.$root.bus.$emit('emitSearchValue',this.searchResult)
+        })
+      }else{
+        this.searchResult = ''
+        this.$root.bus.$emit('emitSearchValue',this.searchResult)
+      }
+    },
+    clickSignout(){
+      signout().then((res)=>{ 
         if(res.code===200){
           this.$root.tooltip(res.message,1)
           this.userName=''
@@ -68,11 +91,6 @@ export default {
         console.log(error)
       })
     },
-
-    clickToUser(){
-      this.$router.push({name: 'User',params: { userName: this.userName}})
-    },
-
     checkWritePageLogin(){
       if(!this.userName){
         this.$root.tooltip('还没有登录，无法操作',2)
@@ -83,15 +101,15 @@ export default {
         this.$router.push({name: 'Write'})
       }
     },
-    // userpageCheckLogin(){
-    //   if(!this.userName){
-    //     this.$router.push({name: 'Homepage'})
-    //     return
-    //   }
-    //   if(this.userName){
-    //     this.$router.push({name: 'User',params:{userName: this.userName}})
-    //   }
-    // },
+    userpageCheckLogin(){
+      if(!this.userName){
+        this.$router.push({name: 'Homepage'})
+        return
+      }
+      if(this.userName){
+        this.$router.push({name: 'User',params:{userName: this.userName}})
+      }
+    },
     // 通过向后端发送请求，后端中间件接收cookie验证session
     // 验证通过就会返回用户信息
     async checkUserSignin(){
@@ -103,7 +121,7 @@ export default {
           this.addUserInfo({
             userName: this.userName,
             avatar: this.avatar
-          })       
+          }) 
         }
       }).catch((error)=>{
         console.log(error)
@@ -118,13 +136,21 @@ export default {
         this.$router.push({name: 'Setting',params: { userName: this.userName}})
       })
       this.$root.bus.$on('emitUser',()=>{
-        this.clickToUser()
+        this.userpageCheckLogin()      
       })
       this.$root.bus.$on('emitSignout',()=>{
         this.clickSignout()
       })
     },
     ...mapActions(['addUserInfo','addbHeaderHeight'])
+  },
+  directives: {
+    focus: {
+      inserted: function (el) {
+        // 聚焦元素
+        el.focus()
+      }
+    }
   },
   mounted(){   
     this.baseUrl=url 

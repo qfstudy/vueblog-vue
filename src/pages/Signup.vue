@@ -59,10 +59,14 @@ export default {
       display: flex;
       justify-content: center;
       margin-top: 80px;
+      .signin{
+        cursor: pointer;
+      }
       .signup{
         padding-bottom: 10px;
         color: #007fff;
         border-bottom: 3px solid #007fff;
+        cursor: pointer;
       }
       .signup-point{
         margin-top: 8px;
@@ -104,6 +108,7 @@ export default {
         color: #fff;
         width: 280px;
         margin-top: 30px;
+        cursor: pointer;
       }
     }
   }

@@ -17,19 +17,19 @@
               <a :href="userData.github" target="_black" v-if="userData.github">
                 {{userData.github}}
               </a>              
-              <input type="text" v-else @click="linkToSetting" placeholder="添加Github链接">                 
+              <span v-else>没有Github链接</span>             
             </div>
             <div class="blog">
               <span>我的博客:</span>
               <a :href="userData.blog" target="_black" v-if="userData.blog">
                 {{userData.blog}}
-              </a>              
-              <input type="text" v-else @click="linkToSetting" placeholder="添加博客网址">               
+              </a>
+              <span v-else>没有博客网址</span>           
             </div>
             <div class="email">
               <span>我的邮箱:</span>
-              <span v-if="userData.email">{{userData.email}}</span>             
-              <input type="text" v-else @click="linkToSetting" placeholder="添加邮箱">              
+              <span v-if="userData.email">{{userData.email}}</span>    
+              <span v-else>没有邮箱</span>
             </div>
           </section> 
           <span @click="linkToSetting" class="edit-user-info" v-if="siginUser">编辑个人资料</span>  
@@ -66,15 +66,32 @@
     </div>
     <section class="user-article">
       <span class="user-article-text">个人文章</span>  
-      <div v-for="item in userArticle" :key="item.id" class="article-wrapper">
-        <section class="user-title-wrapper">
+      <div class="homepage-main-wrapper" v-for="item in userArticle" :key="item.id">
+        <section class="homepage-title-wrapper">
+          <!-- 跳转到文章详情 -->
           <router-link :to="{ name: 'Article', params: { articleId: item.id }}">
-            <span class="title">{{item.title}}d</span>
+            <span class="title">{{item.title}}</span>
           </router-link>
         </section>
-        <section class="user-content-wrapper">
+        <section class="homepage-content-wrapper">
           <div class="content" v-if="item.content" v-html="item.content"></div>
           <div class="content" v-else>{{item.title}}</div>
+        </section>
+        <section class="homepage-bottom-wrapper">
+          <div class="bottom-wrapper">
+            <span class="time">{{item.moment}}</span>
+            <router-link :to="{ name: 'User', params: { userName: item.name }}">
+              <span class="author">{{item.name}}</span>
+            </router-link>          
+            <span class="comment">评论:({{item.comments}})</span>
+            <span class="reading">阅读:({{item.pv}})</span>
+          </div>
+          <div class="article-link">
+            <!-- 跳转到文章详情 -->
+            <router-link :to="{ name: 'Article', params: { articleId: item.id }}">
+              <span class="title">阅读全文</span>
+            </router-link>
+          </div>
         </section>
       </div>
     </section> 
@@ -82,7 +99,7 @@
 </template>
 
 <script>
-import {url,getUserInfo,getUserAllArticle,getAllCollection,getAllLike} from '../API/fetchData.js'
+import {url,getUserNoSignin,getUserAllArticle,getAllCollection,getAllLike} from '../API/fetchData.js'
 import bHeader from './common/bHeader.vue'
 
 export default {
@@ -113,8 +130,7 @@ export default {
     },
     setUserInfoData(){
       let timer=setTimeout(()=>{
-        this.userName=this.$store.state.userInfo.userName
-        this.avatar=this.$store.state.userInfo.avatar
+        this.userName=this.$store.state.userInfo.userName        
         if(this.$route.params.userName===this.userName){      
           this.siginUser=true
           this.userName=this.$store.state.userInfo.userName
@@ -122,24 +138,24 @@ export default {
           this.siginUser=false
           this.userName = this.$route.params.userName
         }
-        this.getUserInfo()
+        this.getUserNoSignin()
         this.getUserArticle()
         this.getUserAllLike()
         this.getAllCollection()
         clearTimeout(timer)
       },0)
     },
-    getUserInfo(){
-      getUserInfo(this.userName).then((res)=>{
+    getUserNoSignin(){
+      getUserNoSignin(this.userName).then((res)=>{
         // console.log(res)
         if(res.code===200){
-          this.userData=res.data         
+          this.userData=res.data  
+          this.avatar=this.userData.avatar   
         }
       })
     },
     getUserArticle(){
       getUserAllArticle(this.userName).then(res=>{
-        console.log(res)
         if(res.code===200){
           this.userArticle=res.data
           this.readNum()
@@ -249,6 +265,7 @@ export default {
             margin-bottom: 10px;
             border-radius: 5px;
             color: #007fff;
+            cursor: pointer;
           }
         }
       }
@@ -267,10 +284,16 @@ export default {
             .icon-dianzan{
               width: 22px;
               height: 22px;
+              fill: #92c6ff;
+              border-radius: 50%;
+              background: #f4f5f5;
             }
             .icon-yuedu{
               width: 22px;
               height: 22px;
+              fill: #92c6ff;
+              border-radius: 50%;
+              background: #f4f5f5;
             }
             span{
               padding-left: 10px;
@@ -293,34 +316,64 @@ export default {
       }  
     } 
     .user-article{
-      margin: 20px 60px;     
+      padding: 20px 60px;     
       background: #fff;
       height: 100%;
       .user-article-text{
         display: inline-block;
-        font-weight: 600;
         padding: 10px 10px;
+        font-size: 22px;
+        width: 100%;
+        border-bottom: 1px solid #e9e9e9;
       }
-      .article-wrapper{
-        padding: 6px 10px;
-        border-bottom: 1px solid #ddd;
-        .user-title-wrapper{
+      .homepage-main-wrapper{
+        padding: 10px;
+        border-bottom: 1px solid #e9e9e9;
+        .homepage-title-wrapper{
           .title{
-            font-size: 16px;
-            font-weight: 600;
-            color: #909090;
+            font-size: 22px;
+            color: #000;
+            font-weight: 500;
           }
         }
-        .user-content-wrapper{
-          padding: 6px 0;
+        .homepage-content-wrapper{
+          margin-top: 16px;
           word-wrap: break-word;
           word-break: break-all;
           .content{
-            color: #909090;
+            font-size: 16px;
+            color: #86868f;
+            line-height: 1.8;
+            padding: 10px 0;
             display: -webkit-box;
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2;
             overflow: hidden;
+          }
+        }
+        .homepage-bottom-wrapper{
+          display: flex;
+          margin-bottom: 3px;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 14px;
+          .bottom-wrapper{
+            span{
+              color: #86868f;
+              padding: 0 2px;
+              font-size: 12px;    
+              &.author{
+                color: #2175bc;
+              }
+            }
+            
+          }
+          .article-link{
+            span{
+              color: #2175bc;
+              font-size: 12px;
+              margin-right: 50px;
+            }
           }
         }
       }
