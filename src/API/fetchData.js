@@ -1,23 +1,13 @@
 import axios from 'axios'
-// const url = 'http://api.qifei.site'
 export const url = 'http://localhost:5000'
+// export const url = 'http://api.qifei.site'
 let $axios = axios.create({
   baseURL: url + '/blog/',
   withCredentials: true
-});
-
-// function getCookieValue(name) {
-//   let reg = new RegExp(name + '=' + '([^;]*)(;|$)')
-//   let result = reg.exec(document.cookie)
-//   console.log('cookie'+result)
-//   return (result && result[1]) || null
-// }
-// getCookieValue()
+})
 
 function $fetch(method, url, data) {
   // console.log(method)
-  // console.log(url)
-  // console.log(data)
   return new Promise((resolve, reject) => {
     $axios({
       method,
@@ -162,4 +152,9 @@ export const saveUserInfo=(avatar,github,blog,email,userName)=>$fetch('post', 's
   blog,
   email,
   userName
+})
+
+// 搜索
+export const searcharticle=(articleId)=>$fetch('post', 'searcharticle', {
+  articleId
 })
