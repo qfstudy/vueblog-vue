@@ -43,9 +43,8 @@ export default {
   name: 'Homepage',
   data(){
     return{
-      userName: '',
-      articleData: '',
-      headerHeight: ''
+      // userName: '',
+      articleData: ''
     }
   },
   components:{
@@ -61,20 +60,6 @@ export default {
         console.log(error)
       })
     },
-    getHeaderHeight(){
-      let timer = setTimeout(()=>{
-        let mainEle=document.querySelector('.homepage-main-wrapper')
-        let noArticle=document.querySelector('.no-article')
-        // console.dir(document.querySelector('.homepage-main-wrapper'))
-        if(mainEle){
-          mainEle.style.marginTop=this.headerHeight+'px'
-        }
-        if(noArticle){
-          noArticle.style.marginTop=this.headerHeight+'px'
-        }
-        clearTimeout(timer)
-      },100)
-    },
     removeBodyClass(){
       let html=document.querySelector('html')
       let body=document.querySelector('body')
@@ -83,9 +68,7 @@ export default {
     }
   },
   mounted(){
-    this.headerHeight=this.$store.state.bHeaderHeight
     this.removeBodyClass()
-    this.getHeaderHeight()
     this.getArticles() 
   }
 }
@@ -100,9 +83,13 @@ export default {
       width: 100%;
       background: #fff;
     }
+    .no-article{
+      margin-top: 56px;
+    }
     .homepage-main-wrapper{
       padding: 10px;
       border-bottom: 1px solid #e9e9e9;
+      margin-top: 56px;
       .homepage-title-wrapper{
         .title{
           font-size: 22px;

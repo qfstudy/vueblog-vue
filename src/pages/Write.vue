@@ -51,7 +51,6 @@ export default {
   data(){
     return{
       isPreview: false,
-      isCheckInputValue: false,
       userName: '',
       avatar: '',
       titleValue: '',

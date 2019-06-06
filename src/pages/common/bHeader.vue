@@ -127,10 +127,6 @@ export default {
         console.log(error)
       })
     },
-    getHeaderHeight(){
-      let bHeaderHeight = document.querySelector('.navbar-wrapper').getBoundingClientRect().height
-      this.addbHeaderHeight(bHeaderHeight)
-    },
     eventBus(){
       this.$root.bus.$on('emitSetting',()=>{
         this.$router.push({name: 'Setting',params: { userName: this.userName}})
@@ -142,7 +138,7 @@ export default {
         this.clickSignout()
       })
     },
-    ...mapActions(['addUserInfo','addbHeaderHeight'])
+    ...mapActions(['addUserInfo'])
   },
   directives: {
     focus: {
@@ -155,8 +151,7 @@ export default {
   mounted(){   
     this.baseUrl=url 
     this.checkUserSignin()
-    this.eventBus()
-    this.getHeaderHeight()
+    this.eventBus()   
   }
 }
 </script>

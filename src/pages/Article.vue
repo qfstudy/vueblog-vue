@@ -153,7 +153,6 @@ export default {
       articleDetail: '',
       userName: '', 
       articleId: '',
-      headerHeight: '',
       avatar: '',
       baseUrl: '',
       isCollection: false,
@@ -252,7 +251,6 @@ export default {
     },
     initData(){
       this.articleId=this.$route.params.articleId
-      this.headerHeight=this.$store.state.bHeaderHeight
       let timer=setTimeout(()=>{
         this.userName=this.$store.state.userInfo.userName
         this.avatar=this.$store.state.userInfo.avatar
@@ -267,14 +265,7 @@ export default {
       let body=document.querySelector('body')
       html.classList.remove('hidden-overflow')
       body.classList.remove('hidden-overflow')
-    },
-    setHeaderHeight(){
-      let timer = setTimeout(()=>{
-        let mainEle=document.querySelector('.main-container')
-        mainEle.style.marginTop=this.headerHeight+'px'
-        clearTimeout(timer)
-      },100)
-    },
+    }
   },
   watch:{
     $route(to,from){
@@ -291,7 +282,6 @@ export default {
     this.initData() 
     this.removeBodyClass()
     this.getArticleData()
-    this.setHeaderHeight()
   }
 }
 </script>
@@ -310,6 +300,7 @@ export default {
     .main-container{
       display: flex;
       width: 100%;
+      margin-top: 56px;
       .main-left{
         position: fixed;
         top: 56px;
