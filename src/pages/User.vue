@@ -17,19 +17,19 @@
               <a :href="userData.github" target="_black" v-if="userData.github">
                 {{userData.github}}
               </a>              
-              <span v-else>没有Github链接</span>             
+              <span v-else>输入Github链接</span>             
             </div>
             <div class="blog">
               <span>我的博客:</span>
               <a :href="userData.blog" target="_black" v-if="userData.blog">
                 {{userData.blog}}
               </a>
-              <span v-else>没有博客网址</span>           
+              <span v-else>输入博客网址</span>           
             </div>
             <div class="email">
               <span>我的邮箱:</span>
               <span v-if="userData.email">{{userData.email}}</span>    
-              <span v-else>没有邮箱</span>
+              <span v-else>输入没有邮箱</span>
             </div>
           </section> 
           <span @click="linkToSetting" class="edit-user-info" v-if="siginUser">编辑个人资料</span>  
@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import {url,getUserNoSignin,getUserAllArticle,getAllCollection,getAllLike} from '../API/fetchData.js'
+import {url,getUserInfo,getUserNoSignin,getUserAllArticle,getAllCollection,getAllLike} from '../API/fetchData.js'
 import bHeader from './common/bHeader.vue'
 
 export default {
@@ -128,22 +128,17 @@ export default {
         this.$root.tooltip('没有登录无法继续操作')
       }
     },
-    setUserInfoData(){
-      let timer=setTimeout(()=>{
-        this.userName=this.$store.state.userInfo.userName        
-        if(this.$route.params.userName===this.userName){      
-          this.siginUser=true
-          this.userName=this.$store.state.userInfo.userName
-        }else{
-          this.siginUser=false
-          this.userName = this.$route.params.userName
+    checkUserSignin(){
+      getUserInfo().then((res)=>{
+      // console.log(res)
+        if(res.code===200){
+          this.userName=res.data.userName
         }
-        this.getUserNoSignin()
-        this.getUserArticle()
-        this.getUserAllLike()
-        this.getAllCollection()
-        clearTimeout(timer)
-      },0)
+         this.initUserData()
+      }).catch((error)=>{
+        this.initUserData()
+        console.log(error)
+      })
     },
     getUserNoSignin(){
       getUserNoSignin(this.userName).then((res)=>{
@@ -180,11 +175,25 @@ export default {
         // console.log(res)
         this.collectionNum=res.data.length
       })
+    },
+    initUserData(){
+      if(this.$route.params.userName===this.userName){      
+        this.siginUser=true
+      }else{
+        this.siginUser=false
+        this.userName = this.$route.params.userName
+      }
+      this.getUserNoSignin()
+      this.getUserArticle()
+      this.getUserAllLike()
+      this.getAllCollection()
     }
   },
+  created(){
+    this.checkUserSignin() 
+  },
   mounted () { 
-    this.baseUrl=url
-    this.setUserInfoData()    
+    this.baseUrl=url     
   }
 }
 
@@ -214,6 +223,7 @@ export default {
           }
         }
         .user-info-wrapper{
+          padding-left: 10px;
           .user-info{
             padding: 6px 0;
             .user-name{
@@ -232,6 +242,10 @@ export default {
               input:focus{
                 outline: none;
               }
+              span:nth-child(2){
+                font-size: 14px;
+                color: #ddd;
+              }
             }
             .blog{
               padding: 5px 0;
@@ -245,6 +259,10 @@ export default {
               input:focus{
                 outline: none;
               }
+              span:nth-child(2){
+                font-size: 14px;
+                color: #ddd;
+              }
             }
             .email{
               padding: 5px 0;
@@ -254,6 +272,10 @@ export default {
               }
               input:focus{
                 outline: none;
+              }
+              span:nth-child(2){
+                font-size: 14px;
+                color: #ddd;
               }
             }
           } 

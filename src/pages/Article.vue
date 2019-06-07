@@ -75,7 +75,7 @@
           </section>
         </div>
         <div class="comment-wrapper">
-          <comment :userName="userName" :avatar="avatar"></comment>
+          <comment></comment>
         </div>
       </section>
       <div class="main-right">
@@ -142,7 +142,7 @@ import hljs from 'highlight.js'
 // idea.css github.css
 import 'highlight.js/styles/atelier-dune-light.css'
 import 'github-markdown-css'
-import {url,getAnArticle,deleteAnArticle,saveCollection,saveLike,getCollection,getLike,getNewArticle} from '../API/fetchData.js'
+import {url,getUserInfo,getAnArticle,deleteAnArticle,saveCollection,saveLike,getCollection,getLike,getNewArticle} from '../API/fetchData.js'
 import Comment from './Comment'
 import bHeader from './common/bHeader.vue'
 
@@ -170,8 +170,8 @@ export default {
     linkToUser(userName){
       this.$router.push({name: 'User',params:{userName: userName}})
     },
-    async getArticleData(){
-      await getAnArticle(this.articleId).then((res)=>{
+    getArticleData(){
+      getAnArticle(this.articleId).then((res)=>{
         // console.log(this.articleId)
         // console.log(res)
         if(res.code===200){
@@ -191,8 +191,8 @@ export default {
         console.log(error)
       })
     },
-    async deleteArticle(){
-      await deleteAnArticle(this.articleId).then((res)=>{
+    deleteArticle(){
+      deleteAnArticle(this.articleId).then((res)=>{
         // console.log(res)
         if(res.code===200){
           this.$root.tooltip(res.message,1)
@@ -206,8 +206,12 @@ export default {
     saveCollection(){
       saveCollection(this.userName,this.articleId).then(res=>{
         // console.log(res)
-        this.isCollection=!this.isCollection
-        this.getArticleData()
+        if(res.code===200){
+          // this.isCollection=!this.isCollection
+          this.getCollection()
+          this.getArticleData()
+        }
+        
       })
     },
     // 获取收藏
@@ -216,8 +220,11 @@ export default {
         // console.log(res)
         if(res.code===200 && res.data){
           this.isCollection=true
+        }else{
+          this.isCollection=false
         }
       }).catch((error)=>{
+        this.isCollection=false
         console.log(error)
       })
     },
@@ -225,18 +232,24 @@ export default {
     saveLike(){
       saveLike(this.userName,this.articleId).then(res=>{
         // console.log(res)
-        this.isLike=!this.isLike
-        this.getArticleData()
+        if(res.code===200){
+          // this.isLike=!this.isLike
+          this.getLike()
+          this.getArticleData()
+        }
       })
     },
      // 获取点赞
     getLike(){
       getLike(this.userName,this.articleId).then(res=>{
-        // console.log(res.data)
+        // console.log(res)
         if(res.code=200 && res.data){
           this.isLike=true
+        }else{
+          this.isLike=false
         }
       }).catch((error)=>{
+        this.isLike=false
         console.log(error)
       })
     },
@@ -249,15 +262,24 @@ export default {
         console.log(error)
       })
     },
-    initData(){
-      this.articleId=this.$route.params.articleId
-      let timer=setTimeout(()=>{
-        this.userName=this.$store.state.userInfo.userName
-        this.avatar=this.$store.state.userInfo.avatar
+    checkUserSignin(){
+      getUserInfo().then((res)=>{
+        console.log(res)
+        if(res.code===200){
+          this.userName=res.data.userName
+          this.avatar=res.data.avatar 
+          this.getLike()
+          this.getCollection()
+        }
+      }).catch((error)=>{
+        this.userName=''
         this.getLike()
         this.getCollection()
-        clearTimeout(timer)
-      },0)
+        console.log(error)
+      })
+    },
+    initData(){
+      this.articleId=this.$route.params.articleId
       hljs.initHighlightingOnLoad()
     },
     removeBodyClass(){
@@ -271,17 +293,26 @@ export default {
     $route(to,from){
       this.articleId=this.$route.params.articleId
       this.getArticleData()
+      this.getLike()
+      this.getCollection()
       this.$root.bus.$emit('emitGetComment',this.articleId)    
     }
+  },
+  created(){
+    this.initData()
+    this.checkUserSignin()    
+    this.getArticleData() 
   },
   mounted(){ 
     this.$root.bus.$on('emitCommentLength',(value)=>{
       this.commentLength=value
     })
+    this.$root.bus.$on('emitSignout',()=>{
+      console.log('emitSignout')
+      this.checkUserSignin()    
+    })
     this.baseUrl=url   
-    this.initData() 
     this.removeBodyClass()
-    this.getArticleData()
   }
 }
 </script>

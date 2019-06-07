@@ -86,12 +86,11 @@ export default {
         }
       }).catch(error => {
         this.$root.tooltip(error.message,2)
-        console.log('sihnin error: ',error)
+        console.log('signin error: ',error)
       })
     },
   },
   mounted(){
-    // if(){}  
     this.verifyCodeUrl = url + '/images/verifycode.jpg'
     this.changVerifyCode()  
   }

@@ -112,8 +112,8 @@ export default {
     },
     // 通过向后端发送请求，后端中间件接收cookie验证session
     // 验证通过就会返回用户信息
-    async checkUserSignin(){
-      await getUserInfo().then((res)=>{
+    checkUserSignin(){
+      getUserInfo().then((res)=>{
         // console.log(res.data)
         if(res.code===200){
           this.userName=res.data.userName
@@ -143,14 +143,15 @@ export default {
   directives: {
     focus: {
       inserted: function (el) {
-        // 聚焦元素
         el.focus()
       }
     }
   },
-  mounted(){   
-    this.baseUrl=url 
+  created(){
     this.checkUserSignin()
+  },
+  mounted(){   
+    this.baseUrl=url     
     this.eventBus()   
   }
 }

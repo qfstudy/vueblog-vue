@@ -122,9 +122,11 @@ export default {
     },
     
   },
-  mounted(){
+  created(){
     this.articleId=this.$route.params.articleId
     this.getArticleData()
+  },
+  mounted(){    
     this.setHeight()
   }
 }

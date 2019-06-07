@@ -9,7 +9,7 @@
     <section class="user-info-wrapper" @keyup.enter="signupSubmit">
       <input type="text" v-model.trim="userName" placeholder="用户名">
       <input type="password" v-model.trim="password" placeholder="密码">
-       <div class="signup-submit" @click="signupSubmit">注册</div>
+      <div class="signup-submit" @click="signupSubmit">注册</div>
     </section>
   </div>
 </template>

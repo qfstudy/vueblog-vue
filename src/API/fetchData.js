@@ -1,6 +1,6 @@
 import axios from 'axios'
-export const url = 'http://localhost:5000'
-// export const url = 'http://api.qifei.site'
+// export const url = 'http://localhost:5000'
+export const url = 'http://api.qifei.site'
 let $axios = axios.create({
   baseURL: url + '/blog/',
   withCredentials: true
@@ -47,7 +47,7 @@ export const verifyCodeChange=()=>{
 export const signout = () => {
   return $fetch('post','signout')
 }
-// 获取用户个人信息　比如头像，用户名等
+// 验证用户个人信息　比如头像，用户名等
 export const getUserInfo = () => {
   return $fetch('get','getuserinfo')
 }

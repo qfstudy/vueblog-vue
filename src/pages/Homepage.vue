@@ -43,7 +43,6 @@ export default {
   name: 'Homepage',
   data(){
     return{
-      // userName: '',
       articleData: ''
     }
   },
@@ -51,8 +50,8 @@ export default {
     bHeader
   },
   methods:{
-    async getArticles(){
-      await getAllArticles().then((res)=>{
+    getArticles(){
+      getAllArticles().then((res)=>{
         if(res.code==200){
           this.articleData=res.articles
         }
@@ -67,9 +66,11 @@ export default {
       body.classList.remove('hidden-overflow')
     }
   },
+  created(){    
+    this.getArticles() 
+  },
   mounted(){
     this.removeBodyClass()
-    this.getArticles() 
   }
 }
 </script>

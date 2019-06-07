@@ -84,13 +84,20 @@ export default {
         }
       }, false)
     },
-    getUserInfo(){
-      getUserInfo(this.userName).then((res)=>{
-        // console.log(res)
-        this.inputUserName=res.data.userName
-        this.inputBlogValue=res.data.blog
-        this.inputGithubValue=res.data.github
-        this.inputEmailValue=res.data.email
+    checkUserSignin(){
+      getUserInfo().then((res)=>{
+      // console.log(res.data)
+        if(res.code===200){
+          this.userName=res.data.userName
+          this.avatar=res.data.avatar 
+          this.inputUserName=res.data.userName
+          this.inputBlogValue=res.data.blog
+          this.inputGithubValue=res.data.github
+          this.inputEmailValue=res.data.email
+        }
+        this.checkSignin()
+      }).catch((error)=>{
+        console.log(error)
       })
     },
     saveUserInfo(){
@@ -104,24 +111,18 @@ export default {
         }
       })
     },
-    setUserInfoData(){
-      let timer=setTimeout(()=>{
-        this.userName=this.$store.state.userInfo.userName
-        this.avatar=this.$store.state.userInfo.avatar
-        this.getUserInfo()
-        this.checkSignin()
-        clearTimeout(timer)
-      },0)
-    },
+
     checkSignin(){
       if(!this.userName){
         this.$router.push({name: 'Signin'})
       }
     }
   },
-  mounted(){
+  created(){
+    this.checkUserSignin()    
+  },
+  mounted(){   
     this.baseUrl=url
-    this.setUserInfoData()
   }
 }
 </script>
